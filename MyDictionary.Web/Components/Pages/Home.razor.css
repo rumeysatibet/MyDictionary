@@ -1,0 +1,137 @@
+.home-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #53925F;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.topic-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.topic-item:hover {
+    background-color: #e9ecef;
+}
+
+.topic-item.featured {
+    background-color: #e8f5e8;
+    border-left: 4px solid #53925F;
+}
+
+.topic-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.topic-link:hover {
+    color: #53925F;
+}
+
+.topic-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.entry-count {
+    font-weight: 500;
+}
+
+.last-update {
+    font-style: italic;
+}
+
+.entry-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entry-item {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #53925F;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.entry-topic {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.entry-author {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.entry-author:hover {
+    color: #53925F;
+}
+
+.entry-content {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .home-container {
+        padding: 0 10px;
+    }
+
+    .topic-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .entry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

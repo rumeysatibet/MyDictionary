@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "tQnSrwzw1zp0KcDptOKAmxuhSSbPypqc1vt1p/RlvPc=",
+  "Source": "MyDictionary.ApiService",
+  "BasePath": "_content/MyDictionary.ApiService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

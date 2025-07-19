@@ -1,0 +1,137 @@
+.home-container[b-rs6hvqt280] {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section[b-rs6hvqt280] {
+    margin-bottom: 40px;
+}
+
+.section-title[b-rs6hvqt280] {
+    font-size: 16px;
+    font-weight: bold;
+    color: #53925F;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.topics-list[b-rs6hvqt280] {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.topic-item[b-rs6hvqt280] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.topic-item:hover[b-rs6hvqt280] {
+    background-color: #e9ecef;
+}
+
+.topic-item.featured[b-rs6hvqt280] {
+    background-color: #e8f5e8;
+    border-left: 4px solid #53925F;
+}
+
+.topic-link[b-rs6hvqt280] {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.topic-link:hover[b-rs6hvqt280] {
+    color: #53925F;
+}
+
+.topic-info[b-rs6hvqt280] {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.entry-count[b-rs6hvqt280] {
+    font-weight: 500;
+}
+
+.last-update[b-rs6hvqt280] {
+    font-style: italic;
+}
+
+.entry-preview[b-rs6hvqt280] {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entry-item[b-rs6hvqt280] {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #53925F;
+}
+
+.entry-header[b-rs6hvqt280] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.entry-topic[b-rs6hvqt280] {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.entry-meta[b-rs6hvqt280] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.entry-author[b-rs6hvqt280] {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.entry-author:hover[b-rs6hvqt280] {
+    color: #53925F;
+}
+
+.entry-content[b-rs6hvqt280] {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .home-container[b-rs6hvqt280] {
+        padding: 0 10px;
+    }
+
+    .topic-item[b-rs6hvqt280] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .entry-header[b-rs6hvqt280] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

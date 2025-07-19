@@ -1,0 +1,186 @@
+.login-container[b-prdban26ym] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.login-card[b-prdban26ym] {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header[b-prdban26ym] {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2[b-prdban26ym] {
+    color: #53925F;
+    margin-bottom: 8px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.login-header p[b-prdban26ym] {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 0;
+}
+
+.form-group[b-prdban26ym] {
+    margin-bottom: 20px;
+}
+
+.form-group label[b-prdban26ym] {
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-control[b-prdban26ym] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus[b-prdban26ym] {
+    outline: none;
+    border-color: #53925F;
+    box-shadow: 0 0 0 2px rgba(83, 146, 95, 0.2);
+}
+
+.form-control:invalid[b-prdban26ym] {
+    border-color: #dc3545;
+}
+
+.checkbox-group[b-prdban26ym] {
+    margin-bottom: 25px;
+}
+
+.checkbox-label[b-prdban26ym] {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.checkbox-label input[type="checkbox"][b-prdban26ym] {
+    margin-right: 8px;
+}
+
+.btn[b-prdban26ym] {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary[b-prdban26ym] {
+    background-color: #53925F;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled)[b-prdban26ym] {
+    background-color: #4A7C54;
+}
+
+.btn:disabled[b-prdban26ym] {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spinner[b-prdban26ym] {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin-b-prdban26ym 1s linear infinite;
+}
+
+@keyframes spin-b-prdban26ym {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.alert[b-prdban26ym] {
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.alert-error[b-prdban26ym] {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.login-footer[b-prdban26ym] {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.login-footer p[b-prdban26ym] {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.login-footer a[b-prdban26ym] {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-footer a:hover[b-prdban26ym] {
+    text-decoration: underline;
+}
+
+.forgot-link[b-prdban26ym] {
+    font-size: 14px;
+}
+
+.validation-message[b-prdban26ym] {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .login-container[b-prdban26ym] {
+        padding: 10px;
+    }
+    
+    .login-card[b-prdban26ym] {
+        padding: 30px 20px;
+    }
+    
+    .login-header h2[b-prdban26ym] {
+        font-size: 24px;
+    }
+}

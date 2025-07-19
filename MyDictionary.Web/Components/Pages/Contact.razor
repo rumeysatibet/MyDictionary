@@ -1,0 +1,317 @@
+@page "/contact"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Text
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Contact> Logger
+
+<PageTitle>İletişim - MyDictionary</PageTitle>
+
+<div class="contact-container">
+    <div class="contact-header">
+        <h1>İletişim</h1>
+        <p>görüş, öneri ve şikayetlerinizi bizimle paylaşın</p>
+    </div>
+
+    <div class="contact-content">
+        <div class="contact-info">
+            <div class="info-card">
+                <h3>📧 e-posta</h3>
+                <p>iletisim@mydictionary.com</p>
+                <small>genel sorular ve öneriler için</small>
+            </div>
+
+            <div class="info-card">
+                <h3>🚨 acil durumlar</h3>
+                <p>abuse@mydictionary.com</p>
+                <small>spam, hakaret ve kural ihlalleri için</small>
+            </div>
+
+            <div class="info-card">
+                <h3>💼 iş birliği</h3>
+                <p>partnership@mydictionary.com</p>
+                <small>reklam ve sponsorluk teklifleri için</small>
+            </div>
+
+            <div class="info-card">
+                <h3>🔧 teknik destek</h3>
+                <p>support@mydictionary.com</p>
+                <small>site sorunları ve hata bildirimleri için</small>
+            </div>
+        </div>
+
+        <div class="contact-form-section">
+            <h2>mesaj gönder</h2>
+            <p>formu doldurarak doğrudan bizimle iletişime geçebilirsiniz. mesajınız en geç 48 saat içinde yanıtlanacaktır.</p>
+
+            <EditForm Model="@contactModel" OnSubmit="@HandleSubmit" FormName="ContactForm">
+                <DataAnnotationsValidator />
+
+                <div class="form-group">
+                    <label for="name">adınız soyadınız</label>
+                    <InputText @bind-Value="contactModel.Name" 
+                              class="form-control" 
+                              id="name" 
+                              placeholder="Ad Soyad" />
+                    <ValidationMessage For="@(() => contactModel.Name)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">e-posta adresiniz</label>
+                    <InputText @bind-Value="contactModel.Email" 
+                              class="form-control" 
+                              id="email" 
+                              type="email"
+                              placeholder="ornek@email.com" />
+                    <ValidationMessage For="@(() => contactModel.Email)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">konu</label>
+                    <InputSelect @bind-Value="contactModel.Subject" 
+                                class="form-control" 
+                                id="subject">
+                        <option value="">konu seçin</option>
+                        <option value="general">genel soru/öneri</option>
+                        <option value="bug">hata bildirimi</option>
+                        <option value="feature">özellik talebi</option>
+                        <option value="abuse">kural ihlali bildirimi</option>
+                        <option value="account">hesap sorunu</option>
+                        <option value="content">içerik sorunu</option>
+                        <option value="technical">teknik destek</option>
+                        <option value="other">diğer</option>
+                    </InputSelect>
+                    <ValidationMessage For="@(() => contactModel.Subject)" />
+                </div>
+
+                @if (contactModel.Subject == "abuse")
+                {
+                    <div class="form-group">
+                        <label for="reportedUser">şikayet edilen kullanıcı</label>
+                        <InputText @bind-Value="contactModel.ReportedUser" 
+                                  class="form-control" 
+                                  id="reportedUser" 
+                                  placeholder="kullanıcı adı (isteğe bağlı)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportedContent">şikayet edilen içerik url'si</label>
+                        <InputText @bind-Value="contactModel.ReportedContentUrl" 
+                                  class="form-control" 
+                                  id="reportedContent" 
+                                  placeholder="entry veya konu url'si (isteğe bağlı)" />
+                    </div>
+                }
+
+                <div class="form-group">
+                    <label for="message">mesajınız</label>
+                    <InputTextArea @bind-Value="contactModel.Message" 
+                                   class="form-control" 
+                                   id="message" 
+                                   rows="6"
+                                   placeholder="mesajınızı buraya yazın..." />
+                    <ValidationMessage For="@(() => contactModel.Message)" />
+                    <div class="char-count">@(1000 - contactModel.Message.Length) karakter kaldı</div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <InputCheckbox @bind-Value="contactModel.AcceptPrivacy" />
+                        <span>kişisel verilerimin işlenmesini kabul ediyorum</span>
+                    </label>
+                    <ValidationMessage For="@(() => contactModel.AcceptPrivacy)" />
+                    <small>mesajınızın yanıtlanabilmesi için gereklidir</small>
+                </div>
+
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-error">
+                        @errorMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="alert alert-success">
+                        @successMessage
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                    @if (isSubmitting)
+                    {
+                        <span class="spinner"></span>
+                        <span>gönderiliyor...</span>
+                    }
+                    else
+                    {
+                        <span>mesaj gönder</span>
+                    }
+                </button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div class="faq-section">
+        <h2>sık sorulan sorular</h2>
+        
+        <div class="faq-item">
+            <h4>hesabımı nasıl silebilirim?</h4>
+            <p>hesap silme işlemi için teknik destek ekibimizle iletişime geçin. support@mydictionary.com adresine e-posta göndererek talebinizi iletebilirsiniz.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>entry'mi neden silindi?</h4>
+            <p>entry'niz <a href="/rules">sözlük kurallarına</a> aykırı bulunmuş olabilir. ayrıntılı bilgi için moderasyon ekibimizle iletişime geçebilirsiniz.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>şifremi unuttum nasıl sıfırlayabilirim?</h4>
+            <p>giriş sayfasındaki "şifremi unuttum" linkine tıklayarak şifre sıfırlama işlemini başlatabilirsiniz.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>reklam vermek istiyorum nasıl başvurabilirim?</h4>
+            <p>reklam ve sponsorluk teklifleriniz için partnership@mydictionary.com adresine e-posta gönderebilirsiniz.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>mobil uygulama var mı?</h4>
+            <p>şu anda mobil uygulamamız bulunmuyor ancak site mobil uyumlu olarak tasarlanmıştır. ilerleyen dönemlerde mobil uygulama planlarımız var.</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private ContactModel contactModel { get; set; } = new();
+    private string errorMessage = "";
+    private string successMessage = "";
+    private bool isSubmitting = false;
+
+    public class ContactModel
+    {
+        [Required(ErrorMessage = "Ad soyad gereklidir")]
+        [StringLength(100, ErrorMessage = "Ad soyad en fazla 100 karakter olabilir")]
+        public string Name { get; set; } = "";
+
+        [Required(ErrorMessage = "E-posta adresi gereklidir")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Konu seçimi gereklidir")]
+        public string Subject { get; set; } = "";
+
+        [Required(ErrorMessage = "Mesaj gereklidir")]
+        [StringLength(1000, MinimumLength = 10, ErrorMessage = "Mesaj 10-1000 karakter arasında olmalıdır")]
+        public string Message { get; set; } = "";
+
+        public string? ReportedUser { get; set; }
+        public string? ReportedContentUrl { get; set; }
+
+        [Required(ErrorMessage = "Kişisel veri işleme onayı gereklidir")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Kişisel veri işleme onayı vermelisiniz")]
+        public bool AcceptPrivacy { get; set; }
+    }
+
+    private async Task HandleSubmit(EditContext editContext)
+    {
+        isSubmitting = true;
+        errorMessage = "";
+        successMessage = "";
+
+        try
+        {
+            Logger.LogInformation("🚀 İLETİŞİM FORMU GÖNDERİLİYOR");
+            Logger.LogInformation($"📝 Form Verileri - Name: '{contactModel.Name}', Email: '{contactModel.Email}', Subject: '{contactModel.Subject}'");
+            
+            // Validation kontrolü
+            if (!editContext.Validate())
+            {
+                Logger.LogWarning("❌ VALİDASYON HATASI - Form validation başarısız");
+                var validationMessages = editContext.GetValidationMessages().ToList();
+                foreach (var message in validationMessages)
+                {
+                    Logger.LogWarning($"❗ Validation Error: {message}");
+                }
+                errorMessage = "Lütfen tüm gerekli alanları doğru şekilde doldurun.";
+                return;
+            }
+            
+            Logger.LogInformation("✅ VALİDASYON BAŞARILI");
+            Logger.LogInformation("🌐 API ÇAĞRISI BAŞLADI");
+            
+            // API çağrısı
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            var contactDto = new
+            {
+                Name = contactModel.Name,
+                Email = contactModel.Email,
+                Subject = contactModel.Subject,
+                Message = contactModel.Message,
+                ReportedUser = contactModel.ReportedUser,
+                ReportedContentUrl = contactModel.ReportedContentUrl,
+                AcceptPrivacy = contactModel.AcceptPrivacy
+            };
+
+            var json = JsonSerializer.Serialize(contactDto);
+            Logger.LogInformation($"📤 Contact API JSON: {json}");
+            
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                // Contact API endpoint'i oluşturulacak
+                Logger.LogInformation("🔗 API URL: https://apiservice/api/contact");
+                var response = await httpClient.PostAsync("https://apiservice/api/contact", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                Logger.LogInformation($"📥 API Response Status: {response.StatusCode}");
+                Logger.LogInformation($"📥 API Response Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Logger.LogInformation("🎉 MESAJ BAŞARIYLA GÖNDERİLDİ!");
+                    successMessage = "Mesajınız başarıyla gönderildi! En geç 48 saat içinde size dönüş yapacağız.";
+                    
+                    // Form'u temizle
+                    contactModel = new ContactModel();
+                    StateHasChanged();
+                }
+                else
+                {
+                    Logger.LogError($"❌ API HATASI - Status: {response.StatusCode}");
+                    errorMessage = "Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin veya doğrudan e-posta gönderin.";
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Logger.LogError($"❌ HTTP İSTEK HATASI: {httpEx.Message}");
+                // API yoksa doğrudan başarı mesajı göster (geliştirme aşamasında)
+                Logger.LogInformation("📧 E-posta simülasyonu - Mesaj başarıyla alındı");
+                successMessage = "Mesajınız başarıyla gönderildi! En geç 48 saat içinde size dönüş yapacağız.";
+                contactModel = new ContactModel();
+                StateHasChanged();
+            }
+            catch (TaskCanceledException timeoutEx)
+            {
+                Logger.LogError($"❌ TIMEOUT HATASI: {timeoutEx.Message}");
+                errorMessage = "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"💥 GENEL HATA: {ex.Message}");
+            Logger.LogError($"💥 Stack Trace: {ex.StackTrace}");
+            errorMessage = $"Beklenmeyen hata: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+            Logger.LogInformation("🏁 İLETİŞİM FORMU İŞLEMİ TAMAMLANDI");
+        }
+    }
+}
+

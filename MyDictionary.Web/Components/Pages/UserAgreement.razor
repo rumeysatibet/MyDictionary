@@ -1,0 +1,112 @@
+@page "/user-agreement"
+
+<PageTitle>Kullanıcı Sözleşmesi - MyDictionary</PageTitle>
+
+<div class="agreement-container">
+    <div class="agreement-card">
+        <div class="agreement-header">
+            <h1>MyDictionary Kullanıcı Sözleşmesi</h1>
+            <p class="version-info">Sürüm: 1.0 | Son Güncelleme: @DateTime.Now.ToString("dd.MM.yyyy")</p>
+        </div>
+
+        <div class="agreement-content">
+            <section class="agreement-section">
+                <h2>1. Genel Koşullar</h2>
+                <p>MyDictionary platformunu kullanarak aşağıdaki şartları kabul etmiş olursunuz:</p>
+                
+                <h3>1.1 Kullanım Koşulları</h3>
+                <ul>
+                    <li>Platform sadece 13 yaş ve üzeri kullanıcılar tarafından kullanılabilir</li>
+                    <li>Hesabınızın güvenliğinden siz sorumlusunuz</li>
+                    <li>Şifrenizi kimseyle paylaşmamalısınız</li>
+                    <li>Gerçek kimlik bilgilerinizi kullanmanız önerilir</li>
+                </ul>
+
+                <h3>1.2 İçerik Kuralları</h3>
+                <ul>
+                    <li>Uygunsuz, hakaret içeren veya yanıltıcı içerik paylaşmak yasaktır</li>
+                    <li>Telif hakkı ihlali yapan içerikler kaldırılacaktır</li>
+                    <li>Spam ve reklam içerikleri yasaktır</li>
+                    <li>Politik ve dini tartışmalarda saygılı olmaya özen gösterin</li>
+                    <li>Başkalarının kişisel bilgilerini paylaşmayın</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>2. Gizlilik</h2>
+                <ul>
+                    <li>Kişisel bilgileriniz gizlilik politikamız çerçevesinde korunmaktadır</li>
+                    <li>E-posta adresiniz sadece platform bildirimleri için kullanılır</li>
+                    <li>Üçüncü taraflarla kişisel bilgilerinizi paylaşmayız</li>
+                    <li>Çerezler sadece platform deneyiminizi iyileştirmek için kullanılır</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>3. Kullanıcı Sorumlulukları</h2>
+                <ul>
+                    <li>Paylaştığınız içeriklerden siz sorumlusunuz</li>
+                    <li>Başka kullanıcılara saygılı davranmakla yükümlüsünüz</li>
+                    <li>Platform kurallarına uymakla yükümlüsünüz</li>
+                    <li>Sahte hesap oluşturmak yasaktır</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>4. Platform Sorumlulukları</h2>
+                <ul>
+                    <li>Platform kullanımından doğan sorumluluk kullanıcıya aittir</li>
+                    <li>Teknik arızalar ve veri kayıplarından platform sorumlu değildir</li>
+                    <li>Hizmet kesintileri önceden bildirilmeye çalışılır</li>
+                    <li>Kullanıcı içeriklerini moderasyon hakkımız saklıdır</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>5. Hesap Dondurma ve Kapatma</h2>
+                <ul>
+                    <li>Kural ihlali durumunda hesabınız askıya alınabilir</li>
+                    <li>Ciddi ihlallerde hesabınız kalıcı olarak kapatılabilir</li>
+                    <li>Hesap kapatma sürecinde verileriniz silinir</li>
+                    <li>İtiraz hakkınız saklıdır</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>6. Değişiklikler</h2>
+                <ul>
+                    <li>Bu sözleşme herhangi bir zamanda güncellenebilir</li>
+                    <li>Önemli değişiklikler e-posta ile bildirilir</li>
+                    <li>Güncellemeler yayınlandığı tarihten itibaren geçerlidir</li>
+                    <li>Değişiklikleri kabul etmemeniz durumunda hesabınızı kapatabilirsiniz</li>
+                </ul>
+            </section>
+
+            <section class="agreement-section">
+                <h2>7. İletişim</h2>
+                <p>Bu sözleşme ile ilgili sorularınız için:</p>
+                <ul>
+                    <li>E-posta: info@mydictionary.com</li>
+                    <li>Destek: support@mydictionary.com</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="agreement-footer">
+            <p><strong>Son Güncelleme:</strong> @DateTime.UtcNow.ToString("dd.MM.yyyy HH:mm") UTC</p>
+            <p><strong>Sürüm:</strong> 1.0</p>
+            
+            <div class="footer-actions">
+                <button type="button" class="btn btn-secondary" @onclick="CloseWindow">Kapat</button>
+                <a href="/register" class="btn btn-primary">Kabul Et ve Kayıt Ol</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void CloseWindow()
+    {
+        // JavaScript ile pencereyi kapat
+    }
+}

@@ -1,0 +1,144 @@
+@using Microsoft.AspNetCore.Components.Web
+@using MyDictionary.Web.Services
+@inject AuthenticationStateService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime _jsRuntime
+@implements IDisposable
+
+<header class="main-header">
+    <div class="header-container">
+        <!-- Logo ve Site Adı -->
+        <div class="logo-section">
+            <a href="/" class="logo-link">
+                <img src="/favicon.png" alt="MyDictionary Logo" class="logo" />
+                <span class="site-name">MyDictionary</span>
+            </a>
+        </div>
+
+        <!-- Arama Kutusu -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" 
+                       class="search-input" 
+                       placeholder="başlık, #entry, yazar ara..."
+                       @bind="SearchQuery"
+                       @onkeypress="HandleSearchKeyPress" />
+                <button class="search-button" @onclick="HandleSearch">
+                    <span class="search-icon">🔍</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Giriş ve Kayıt Butonları / Kullanıcı Menüsü -->
+        <div class="auth-section">
+            @if (AuthService.IsAuthenticated)
+            {
+                <div class="user-menu">
+                    <button class="user-button" @onclick="ToggleUserDropdown">
+                        <span class="user-name">@AuthService.CurrentUser?.Username</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    
+                    @if (showUserDropdown)
+                    {
+                        <div class="user-dropdown" @onclick:stopPropagation="true">
+                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/profile"))">profilim</button>
+                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/my-entries"))">entry'lerim</button>
+                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/favorites"))">favorilerim</button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-item" @onclick="HandleLogout">çıkış yap</button>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <a href="/login" class="auth-link login-link">giriş</a>
+                <a href="/register" class="auth-link register-link">kayıt ol</a>
+            }
+        </div>
+    </div>
+
+    <!-- Kategori Navigasyonu -->
+    <nav class="category-nav">
+        <div class="category-container">
+            <a href="/category/yazilim" class="category-link">yazılım</a>
+            <a href="/category/yasam" class="category-link">yaşam</a>
+            <a href="/category/diziler" class="category-link">diziler</a>
+            <a href="/category/kitaplar" class="category-link">kitaplar</a>
+            <a href="/category/muzik" class="category-link">müzik</a>
+            <a href="/category/spor" class="category-link">spor</a>
+            <a href="/category/tarih" class="category-link">tarih</a>
+            <a href="/category/seyahat" class="category-link">seyahat</a>
+        </div>
+    </nav>
+</header>
+
+@code {
+    private string SearchQuery = "";
+    private bool showUserDropdown = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // AuthService'i initialize et
+        await AuthService.InitializeAsync();
+        AuthService.OnAuthenticationChanged += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // İlk render sonrası localStorage'dan kullanıcı bilgilerini yükle
+            await AuthService.LoadFromStorageAsync();
+            StateHasChanged();
+            
+        }
+    }
+
+    public void Dispose()
+    {
+        AuthService.OnAuthenticationChanged -= StateHasChanged;
+    }
+
+    private async Task HandleSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            // Arama işlemi burada yapılacak
+            Console.WriteLine($"Arama yapılıyor: {SearchQuery}");
+        }
+    }
+
+    private async Task HandleSearchKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await HandleSearch();
+        }
+    }
+
+    private void ToggleUserDropdown()
+    {
+        showUserDropdown = !showUserDropdown;
+    }
+
+    private void CloseDropdown()
+    {
+        showUserDropdown = false;
+    }
+
+    private void CloseDropdownAndNavigate(string url)
+    {
+        showUserDropdown = false;
+        Navigation.NavigateTo(url);
+    }
+
+    private void HandleLogout()
+    {
+        AuthService.Logout();
+        showUserDropdown = false;
+        // Anasayfaya yönlendir
+        Navigation.NavigateTo("/");
+    }
+}

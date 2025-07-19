@@ -1,0 +1,272 @@
+@page "/login"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Text
+@using MyDictionary.Web.Services
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Login> Logger
+@inject NavigationManager Navigation
+@inject AuthenticationStateService AuthService
+
+<PageTitle>Giriş Yap - MyDictionary</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>MyDictionary'ye Giriş Yap</h2>
+            <p>Hesabınıza giriş yapın ve topluluğa katılın</p>
+        </div>
+
+        <EditForm Model="@loginModel" OnSubmit="@HandleLogin" FormName="LoginForm">
+            <DataAnnotationsValidator />
+            
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <InputText @bind-Value="loginModel.Email" 
+                          class="form-control" 
+                          id="email" 
+                          type="email"
+                          placeholder="E-posta adresinizi girin" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Şifre</label>
+                <InputText @bind-Value="loginModel.Password" 
+                          class="form-control" 
+                          id="password" 
+                          type="password"
+                          placeholder="Şifrenizi girin" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <InputCheckbox @bind-Value="loginModel.RememberMe" />
+                    <span>Beni hatırla</span>
+                </label>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-error">
+                    @errorMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success">
+                    @successMessage
+                </div>
+            }
+
+            <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner"></span>
+                    <span>Giriş yapılıyor...</span>
+                }
+                else
+                {
+                    <span>Giriş Yap</span>
+                }
+            </button>
+        </EditForm>
+
+        <div class="login-footer">
+            <p><a href="/forgot-password" class="forgot-link">Şifremi unuttum</a></p>
+            <p>Hesabınız yok mu? <a href="/register">Kayıt olun</a></p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginModel loginModel { get; set; } = new();
+    private string errorMessage = "";
+    private string successMessage = "";
+    private bool isLoading = false;
+    private bool shouldNavigateToProfile = false;
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "E-posta adresi gereklidir")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "Şifre gereklidir")]
+        public string Password { get; set; } = "";
+
+        public bool RememberMe { get; set; }
+    }
+
+    private async Task HandleLogin(EditContext editContext)
+    {
+        isLoading = true;
+        errorMessage = "";
+        successMessage = "";
+
+        try
+        {
+            Logger.LogInformation("🚀 GİRİŞ İŞLEMİ BAŞLADI");
+            Logger.LogInformation($"📝 Giriş Verileri - Email: '{loginModel.Email}', RememberMe: {loginModel.RememberMe}");
+            
+            // Önce validation kontrolü yap
+            if (!editContext.Validate())
+            {
+                Logger.LogWarning("❌ VALİDASYON HATASI - Form validation başarısız");
+                var validationMessages = editContext.GetValidationMessages().ToList();
+                foreach (var message in validationMessages)
+                {
+                    Logger.LogWarning($"❗ Validation Error: {message}");
+                }
+                isLoading = false;
+                errorMessage = "Lütfen tüm alanları doğru şekilde doldurun.";
+                return;
+            }
+            
+            Logger.LogInformation("✅ VALİDASYON BAŞARILI - Tüm alanlar geçerli");
+            Logger.LogInformation("🌐 API ÇAĞRISI BAŞLADI");
+            
+            // API çağrısı
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            var loginDto = new
+            {
+                UsernameOrEmail = loginModel.Email,
+                Password = loginModel.Password
+            };
+
+            var json = JsonSerializer.Serialize(loginDto);
+            Logger.LogInformation($"📤 Login API JSON: {json}");
+            
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                Logger.LogInformation("🔗 API URL: https://apiservice/api/auth/login");
+                var response = await httpClient.PostAsync("https://apiservice/api/auth/login", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                
+                Logger.LogInformation($"📥 API Response Status: {response.StatusCode}");
+                Logger.LogInformation($"📥 API Response Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Logger.LogInformation("🎉 GİRİŞ BAŞARILI!");
+                    
+                    try
+                    {
+                        var authResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                        if (authResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                        {
+                            if (authResponse.TryGetProperty("user", out var userElement))
+                            {
+                                // Kullanıcı bilgilerini parse et
+                                var userInfo = new AuthenticationStateService.UserInfo
+                                {
+                                    Id = userElement.GetProperty("id").GetInt32(),
+                                    Username = userElement.GetProperty("username").GetString() ?? "",
+                                    Email = userElement.GetProperty("email").GetString() ?? "",
+                                    BirthDate = userElement.GetProperty("birthDate").GetDateTime(),
+                                    Gender = userElement.GetProperty("gender").GetInt32(),
+                                    Role = userElement.GetProperty("role").GetString() ?? "",
+                                    CreatedAt = userElement.GetProperty("createdAt").GetDateTime(),
+                                    LastLoginAt = userElement.TryGetProperty("lastLoginAt", out var lastLoginElement) 
+                                        ? lastLoginElement.GetDateTime() : null
+                                };
+                                
+                                Logger.LogInformation($"👤 Kullanıcı bilgileri alındı: {userInfo.Username}");
+                                successMessage = $"Hoş geldiniz, {userInfo.Username}!";
+                                
+                                // Token'ı al
+                                var token = "";
+                                if (authResponse.TryGetProperty("token", out var tokenElement))
+                                {
+                                    token = tokenElement.GetString() ?? "";
+                                    Logger.LogInformation($"🔑 Token alındı (uzunluk: {token.Length})");
+                                }
+                                
+                                // Authentication state'i ayarla
+                                AuthService.SetUser(userInfo, token);
+                                Logger.LogInformation($"🔐 AuthService user set - IsAuthenticated: {AuthService.IsAuthenticated}");
+                                
+                                // Başarı mesajını göster ve navigation'ı planla
+                                successMessage = $"Hoş geldiniz, {userInfo.Username}!";
+                                StateHasChanged();
+                                
+                                // Artık localStorage kullanıyoruz, direkt navigation yapabiliriz
+                                Logger.LogInformation("🚀 Profil sayfasına yönlendiriliyor...");
+                                Navigation.NavigateTo("/profile");
+                                Logger.LogInformation("✅ Navigation.NavigateTo çağrıldı");
+                            }
+                        }
+                        else
+                        {
+                            Logger.LogWarning("❌ API Success=false döndü");
+                            if (authResponse.TryGetProperty("message", out var messageElement))
+                            {
+                                errorMessage = messageElement.GetString() ?? "Giriş başarısız.";
+                            }
+                            else
+                            {
+                                errorMessage = "Giriş başarısız.";
+                            }
+                        }
+                    }
+                    catch (Exception jsonEx)
+                    {
+                        Logger.LogError($"❌ JSON Parse Error: {jsonEx.Message}");
+                        errorMessage = "Sunucu yanıt formatı hatalı.";
+                    }
+                }
+                else
+                {
+                    Logger.LogError($"❌ API HATASI - Status: {response.StatusCode}");
+                    try
+                    {
+                        var errorResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
+                        if (errorResponse.TryGetProperty("message", out var messageElement))
+                        {
+                            var apiErrorMessage = messageElement.GetString() ?? "Giriş sırasında bir hata oluştu.";
+                            Logger.LogError($"❌ API Error Message: {apiErrorMessage}");
+                            errorMessage = apiErrorMessage;
+                        }
+                        else
+                        {
+                            Logger.LogError("❌ API Error: Message property bulunamadı");
+                            errorMessage = "E-posta/kullanıcı adı veya şifre hatalı.";
+                        }
+                    }
+                    catch (Exception jsonEx)
+                    {
+                        Logger.LogError($"❌ JSON Parse Error: {jsonEx.Message}");
+                        errorMessage = "E-posta/kullanıcı adı veya şifre hatalı.";
+                    }
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Logger.LogError($"❌ HTTP İSTEK HATASI: {httpEx.Message}");
+                errorMessage = $"Bağlantı hatası: {httpEx.Message}";
+            }
+            catch (TaskCanceledException timeoutEx)
+            {
+                Logger.LogError($"❌ TIMEOUT HATASI: {timeoutEx.Message}");
+                errorMessage = "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"💥 GENEL HATA: {ex.Message}");
+            Logger.LogError($"💥 Stack Trace: {ex.StackTrace}");
+            errorMessage = $"Beklenmeyen hata: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            Logger.LogInformation("🏁 GİRİŞ İŞLEMİ TAMAMLANDI");
+        }
+    }
+}

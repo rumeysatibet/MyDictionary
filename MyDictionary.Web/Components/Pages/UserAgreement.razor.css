@@ -1,0 +1,170 @@
+.agreement-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.agreement-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.agreement-header {
+    padding: 30px 40px 0;
+    text-align: center;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.agreement-header h1 {
+    color: #53925F;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.version-info {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.agreement-content {
+    padding: 20px 40px;
+    line-height: 1.6;
+}
+
+.agreement-section {
+    margin-bottom: 25px;
+}
+
+.agreement-section h2 {
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #53925F;
+}
+
+.agreement-section h3 {
+    color: #53925F;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    margin-top: 15px;
+}
+
+.agreement-section p {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.agreement-section ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.agreement-section li {
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.agreement-footer {
+    padding: 20px 40px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.agreement-footer p {
+    color: #6c757d;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-primary {
+    background-color: #53925F;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4A7C54;
+}
+
+@media (max-width: 768px) {
+    .agreement-container {
+        padding: 10px;
+    }
+    
+    .agreement-card {
+        max-height: 90vh;
+    }
+    
+    .agreement-header {
+        padding: 20px;
+    }
+    
+    .agreement-header h1 {
+        font-size: 24px;
+    }
+    
+    .agreement-content {
+        padding: 15px 20px;
+    }
+    
+    .agreement-section h2 {
+        font-size: 18px;
+    }
+    
+    .agreement-footer {
+        padding: 15px 20px;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}

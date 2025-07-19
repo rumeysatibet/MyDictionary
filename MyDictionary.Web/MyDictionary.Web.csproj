@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Geliştirme ortamında process kilitleme problemlerini azalt -->
+    <UseRazorBuildServer>false</UseRazorBuildServer>
+    <UseSharedCompilation>false</UseSharedCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyDictionary.ServiceDefaults\MyDictionary.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

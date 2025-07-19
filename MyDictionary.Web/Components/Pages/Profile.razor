@@ -1,0 +1,479 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using MyDictionary.Web.Services
+@inject ILogger<Profile> Logger
+@inject AuthenticationStateService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Profilim - MyDictionary</PageTitle>
+
+<div class="profile-container">
+    <div class="profile-content">
+        <!-- Sol Kolon - Kullanıcı Bilgileri -->
+        <div class="profile-sidebar">
+            <div class="user-info-card">
+                <div class="profile-photo-section">
+                    <div class="profile-photo">
+                        @if (!string.IsNullOrEmpty(currentUser.ProfilePhotoUrl))
+                        {
+                            <img src="@currentUser.ProfilePhotoUrl" alt="@currentUser.Username" />
+                        }
+                        else
+                        {
+                            <div class="default-avatar">
+                                @GetInitials(currentUser.Username)
+                            </div>
+                        }
+                        <button class="photo-edit-btn" @onclick="OpenPhotoUpload">
+                            <span class="edit-icon">📷</span>
+                        </button>
+                    </div>
+                    
+                    @if (showPhotoUpload)
+                    {
+                        <div class="photo-upload-modal">
+                            <div class="upload-content">
+                                <h4>Profil Fotoğrafı Yükle</h4>
+                                <InputFile OnChange="HandlePhotoUpload" accept="image/*" />
+                                <div class="upload-actions">
+                                    <button class="btn btn-primary" @onclick="UploadPhoto" disabled="@isUploadingPhoto">
+                                        @if (isUploadingPhoto)
+                                        {
+                                            <span>Yükleniyor...</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Yükle</span>
+                                        }
+                                    </button>
+                                    <button class="btn btn-secondary" @onclick="ClosePhotoUpload">İptal</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="user-details">
+                    <h2 class="username">@currentUser.Username</h2>
+                    <p class="join-date">@currentUser.CreatedAt.ToString("MMMM yyyy")'dan beri üye</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item clickable" @onclick="ShowEntries">
+                            <span class="stat-number">@currentUser.EntryCount</span>
+                            <span class="stat-label">entry</span>
+                        </div>
+                        
+                        <div class="stat-item clickable" @onclick="ShowFollowers">
+                            <span class="stat-number">@currentUser.FollowerCount</span>
+                            <span class="stat-label">takipçi</span>
+                        </div>
+                        
+                        <div class="stat-item clickable" @onclick="ShowFollowing">
+                            <span class="stat-number">@currentUser.FollowingCount</span>
+                            <span class="stat-label">takip</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon - Entry ve Favoriler -->
+        <div class="profile-main">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn @(activeTab == "entries" ? "active" : "")" 
+                            @onclick="@(() => SwitchTab("entries"))">
+                        girdiğim entry'ler
+                    </button>
+                    <button class="tab-btn @(activeTab == "favorites" ? "active" : "")" 
+                            @onclick="@(() => SwitchTab("favorites"))">
+                        favori entry'lerim
+                    </button>
+                </div>
+
+                <div class="tab-content">
+                    @if (activeTab == "entries")
+                    {
+                        <div class="entries-list">
+                            @if (userEntries.Any())
+                            {
+                                @foreach (var entry in userEntries)
+                                {
+                                    <div class="entry-item">
+                                        <div class="entry-header">
+                                            <a href="/topic/@entry.TopicSlug" class="entry-topic">@entry.TopicTitle</a>
+                                            <span class="entry-date">@entry.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                                        </div>
+                                        <div class="entry-content">
+                                            @entry.Content
+                                        </div>
+                                        <div class="entry-stats">
+                                            <span class="vote-count">@entry.VoteCount oy</span>
+                                            <span class="favorite-count">@entry.FavoriteCount favori</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <p>henüz hiç entry girmemişsiniz.</p>
+                                    <a href="/" class="btn btn-primary">entry yazmaya başla</a>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="favorites-list">
+                            @if (favoriteEntries.Any())
+                            {
+                                @foreach (var entry in favoriteEntries)
+                                {
+                                    <div class="entry-item">
+                                        <div class="entry-header">
+                                            <a href="/topic/@entry.TopicSlug" class="entry-topic">@entry.TopicTitle</a>
+                                            <span class="entry-author">@entry.AuthorUsername</span>
+                                            <span class="entry-date">@entry.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                                        </div>
+                                        <div class="entry-content">
+                                            @entry.Content
+                                        </div>
+                                        <div class="entry-stats">
+                                            <span class="vote-count">@entry.VoteCount oy</span>
+                                            <button class="unfavorite-btn" @onclick="() => RemoveFromFavorites(entry.Id)">
+                                                favorilerden çıkar
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="empty-state">
+                                    <p>henüz hiç entry favorilemediniz.</p>
+                                    <a href="/" class="btn btn-primary">entry'leri keşfet</a>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alt Kısım - Hakkımda -->
+    <div class="about-section">
+        <div class="about-card">
+            <h3>hakkımda</h3>
+            @if (isEditingAbout)
+            {
+                <div class="about-edit">
+                    <textarea @bind="aboutText" placeholder="kendinizi tanıtın..." rows="6" maxlength="500"></textarea>
+                    <div class="char-count">@(500 - aboutText.Length) karakter kaldı</div>
+                    <div class="about-actions">
+                        <button class="btn btn-primary" @onclick="SaveAbout" disabled="@isSavingAbout">
+                            @if (isSavingAbout)
+                            {
+                                <span>kaydediliyor...</span>
+                            }
+                            else
+                            {
+                                <span>kaydet</span>
+                            }
+                        </button>
+                        <button class="btn btn-secondary" @onclick="CancelEditAbout">iptal</button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="about-display">
+                    @if (!string.IsNullOrEmpty(currentUser.About))
+                    {
+                        <p>@currentUser.About</p>
+                    }
+                    else
+                    {
+                        <p class="empty-about">henüz bir tanıtım yazmadınız.</p>
+                    }
+                    <button class="btn btn-outline" @onclick="StartEditAbout">düzenle</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Takipçi/Takip Modali -->
+@if (showFollowModal)
+{
+    <div class="modal-overlay" @onclick="CloseFollowModal">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h4>@followModalTitle</h4>
+                <button class="modal-close" @onclick="CloseFollowModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                @if (followModalUsers.Any())
+                {
+                    @foreach (var user in followModalUsers)
+                    {
+                        <div class="user-item">
+                            <div class="user-avatar">
+                                @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
+                                {
+                                    <img src="@user.ProfilePhotoUrl" alt="@user.Username" />
+                                }
+                                else
+                                {
+                                    <div class="default-avatar-small">@GetInitials(user.Username)</div>
+                                }
+                            </div>
+                            <div class="user-info">
+                                <a href="/user/@user.Username" class="user-link">@user.Username</a>
+                                <span class="user-stats">@user.EntryCount entry</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="empty-state">henüz kimse yok.</p>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private UserProfileModel currentUser = new();
+    private List<EntryModel> userEntries = new();
+    private List<EntryModel> favoriteEntries = new();
+    private List<UserModel> followModalUsers = new();
+    
+    private string activeTab = "entries";
+    private bool showPhotoUpload = false;
+    private bool isUploadingPhoto = false;
+    private bool isEditingAbout = false;
+    private bool isSavingAbout = false;
+    private bool showFollowModal = false;
+    private string followModalTitle = "";
+    private string aboutText = "";
+    private IBrowserFile? selectedPhoto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Logger.LogInformation("📄 Profile sayfası yükleniyor...");
+        
+        // Önce AuthService'i initialize et
+        await AuthService.InitializeAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // localStorage'dan kullanıcı bilgilerini yükle
+            await AuthService.LoadFromStorageAsync();
+            
+            Logger.LogInformation($"🔐 AuthService.IsAuthenticated: {AuthService.IsAuthenticated}");
+            Logger.LogInformation($"👤 AuthService.CurrentUser: {AuthService.CurrentUser?.Username ?? "null"}");
+            
+            // Eğer giriş yapılmamışsa login sayfasına yönlendir
+            if (!AuthService.IsAuthenticated)
+            {
+                Logger.LogWarning("❌ Kullanıcı giriş yapmamış, login sayfasına yönlendiriliyor");
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            Logger.LogInformation("✅ Kullanıcı giriş yapmış, profil yükleniyor");
+            await LoadUserProfile();
+            await LoadUserEntries();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadUserProfile()
+    {
+        if (AuthService.CurrentUser != null)
+        {
+            // Gerçek kullanıcı bilgilerini AuthService'den al
+            currentUser = new UserProfileModel
+            {
+                Username = AuthService.CurrentUser.Username,
+                CreatedAt = AuthService.CurrentUser.CreatedAt,
+                EntryCount = 42, // Bu API'den gelecek
+                FollowerCount = 18, // Bu API'den gelecek
+                FollowingCount = 25, // Bu API'den gelecek
+                About = "yazılım geliştirme alanında deneyimim var. özellikle .net ve javascript teknolojilerine odaklanıyorum."
+            };
+            
+            aboutText = currentUser.About ?? "";
+            Logger.LogInformation($"👤 Profil yüklendi: {currentUser.Username}");
+        }
+    }
+
+    private async Task LoadUserEntries()
+    {
+        // Simulated data - API çağrısı ile değiştirilecek
+        userEntries = new List<EntryModel>
+        {
+            new() { Id = 1, TopicTitle = "asp.net core", TopicSlug = "asp-net-core", Content = "modern web uygulamaları geliştirmek için harika bir framework...", CreatedAt = DateTime.Now.AddDays(-5), VoteCount = 12, FavoriteCount = 3 },
+            new() { Id = 2, TopicTitle = "clean code", TopicSlug = "clean-code", Content = "okunabilir kod yazmak sanıldığından çok daha önemli...", CreatedAt = DateTime.Now.AddDays(-10), VoteCount = 8, FavoriteCount = 2 }
+        };
+
+        favoriteEntries = new List<EntryModel>
+        {
+            new() { Id = 3, TopicTitle = "design patterns", TopicSlug = "design-patterns", Content = "singleton pattern neden kötü olarak kabul ediliyor?", AuthorUsername = "architect_dev", CreatedAt = DateTime.Now.AddDays(-3), VoteCount = 15, FavoriteCount = 7 }
+        };
+    }
+
+    private void SwitchTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private void OpenPhotoUpload()
+    {
+        showPhotoUpload = true;
+    }
+
+    private void ClosePhotoUpload()
+    {
+        showPhotoUpload = false;
+        selectedPhoto = null;
+    }
+
+    private void HandlePhotoUpload(InputFileChangeEventArgs e)
+    {
+        selectedPhoto = e.File;
+    }
+
+    private async Task UploadPhoto()
+    {
+        if (selectedPhoto == null) return;
+
+        isUploadingPhoto = true;
+        try
+        {
+            // Fotoğraf yükleme API çağrısı burada yapılacak
+            await Task.Delay(2000); // Simülasyon
+            Logger.LogInformation($"Profil fotoğrafı yüklendi: {selectedPhoto.Name}");
+            ClosePhotoUpload();
+        }
+        finally
+        {
+            isUploadingPhoto = false;
+        }
+    }
+
+    private void StartEditAbout()
+    {
+        isEditingAbout = true;
+        aboutText = currentUser.About ?? "";
+    }
+
+    private void CancelEditAbout()
+    {
+        isEditingAbout = false;
+        aboutText = currentUser.About ?? "";
+    }
+
+    private async Task SaveAbout()
+    {
+        isSavingAbout = true;
+        try
+        {
+            // API çağrısı burada yapılacak
+            await Task.Delay(1000); // Simülasyon
+            currentUser.About = aboutText;
+            isEditingAbout = false;
+            Logger.LogInformation("Hakkımda bölümü güncellendi");
+        }
+        finally
+        {
+            isSavingAbout = false;
+        }
+    }
+
+    private async Task ShowFollowers()
+    {
+        followModalTitle = "takipçilerim";
+        // API çağrısı ile takipçi listesi yüklenecek
+        followModalUsers = new List<UserModel>
+        {
+            new() { Username = "frontend_dev", EntryCount = 23, ProfilePhotoUrl = "" },
+            new() { Username = "backend_master", EntryCount = 156, ProfilePhotoUrl = "" }
+        };
+        showFollowModal = true;
+    }
+
+    private async Task ShowFollowing()
+    {
+        followModalTitle = "takip ettiklerim";
+        // API çağrısı ile takip edilen liste yüklenecek
+        followModalUsers = new List<UserModel>
+        {
+            new() { Username = "code_guru", EntryCount = 89, ProfilePhotoUrl = "" },
+            new() { Username = "tech_writer", EntryCount = 67, ProfilePhotoUrl = "" }
+        };
+        showFollowModal = true;
+    }
+
+    private async Task ShowEntries()
+    {
+        activeTab = "entries";
+    }
+
+    private void CloseFollowModal()
+    {
+        showFollowModal = false;
+        followModalUsers.Clear();
+    }
+
+    private async Task RemoveFromFavorites(int entryId)
+    {
+        // API çağrısı ile favorilerden çıkarma işlemi
+        favoriteEntries = favoriteEntries.Where(e => e.Id != entryId).ToList();
+        Logger.LogInformation($"Entry {entryId} favorilerden çıkarıldı");
+    }
+
+    private string GetInitials(string username)
+    {
+        if (string.IsNullOrEmpty(username)) return "?";
+        return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    public class UserProfileModel
+    {
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int EntryCount { get; set; }
+        public int FollowerCount { get; set; }
+        public int FollowingCount { get; set; }
+        public string? About { get; set; }
+    }
+
+    public class EntryModel
+    {
+        public int Id { get; set; }
+        public string TopicTitle { get; set; } = "";
+        public string TopicSlug { get; set; } = "";
+        public string Content { get; set; } = "";
+        public string? AuthorUsername { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int VoteCount { get; set; }
+        public int FavoriteCount { get; set; }
+    }
+
+    public class UserModel
+    {
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+        public int EntryCount { get; set; }
+    }
+}
+

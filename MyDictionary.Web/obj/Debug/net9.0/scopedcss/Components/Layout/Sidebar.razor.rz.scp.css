@@ -1,0 +1,60 @@
+.sidebar-container[b-uwidg2iz6f] {
+    background-color: #f8f9fa;
+    padding: 20px;
+    min-height: 100vh;
+    width: 250px;
+    border-right: 1px solid #e9ecef;
+}
+
+.sidebar-section[b-uwidg2iz6f] {
+    margin-bottom: 30px;
+}
+
+.sidebar-title[b-uwidg2iz6f] {
+    font-size: 14px;
+    font-weight: bold;
+    color: #53925F;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e9ecef;
+    text-transform: lowercase;
+}
+
+.sidebar-links[b-uwidg2iz6f] {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-link[b-uwidg2iz6f] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-link:hover[b-uwidg2iz6f] {
+    background-color: #e9ecef;
+    color: #53925F;
+}
+
+.link-text[b-uwidg2iz6f] {
+    flex: 1;
+    text-align: left;
+}
+
+.visit-count[b-uwidg2iz6f] {
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.entry-count[b-uwidg2iz6f] {
+    color: #6c757d;
+    font-size: 11px;
+}
