@@ -34,19 +34,32 @@
             @if (AuthService.IsAuthenticated)
             {
                 <div class="user-menu">
-                    <button class="user-button" @onclick="ToggleUserDropdown">
-                        <span class="user-name">@AuthService.CurrentUser?.Username</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
+                    <div class="user-actions">
+                        <button class="message-button" title="mesajlar">
+                            <span class="message-icon">💬</span>
+                        </button>
+                        <button class="user-button" @onclick="ToggleUserDropdown">
+                            <span class="user-name">ben</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                    </div>
                     
                     @if (showUserDropdown)
                     {
                         <div class="user-dropdown" @onclick:stopPropagation="true">
-                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/profile"))">profilim</button>
-                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/my-entries"))">entry'lerim</button>
-                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/favorites"))">favorilerim</button>
+                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate($"/profile/{AuthService.CurrentUser?.Username}"))">
+                                <span class="dropdown-icon">👤</span>
+                                profil
+                            </button>
+                            <button class="dropdown-item" @onclick="@(() => CloseDropdownAndNavigate("/settings"))">
+                                <span class="dropdown-icon">⚙️</span>
+                                ayarlar
+                            </button>
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-item logout-item" @onclick="HandleLogout">çıkış yap</button>
+                            <button class="dropdown-item logout-item" @onclick="HandleLogout">
+                                <span class="dropdown-icon">🚪</span>
+                                çıkış yap
+                            </button>
                         </div>
                     }
                 </div>
@@ -134,9 +147,9 @@
         Navigation.NavigateTo(url);
     }
 
-    private void HandleLogout()
+    private async Task HandleLogout()
     {
-        AuthService.Logout();
+        await AuthService.LogoutAsync();
         showUserDropdown = false;
         // Anasayfaya yönlendir
         Navigation.NavigateTo("/");

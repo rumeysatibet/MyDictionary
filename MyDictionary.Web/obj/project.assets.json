@@ -2193,11 +2193,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
+      "projectUniqueName": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
       "projectName": "MyDictionary.Web",
-      "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
+      "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
       "packagesPath": "C:\\Users\\rumey\\.nuget\\packages\\",
-      "outputPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.Web\\obj\\",
+      "outputPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2219,8 +2219,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\DEV\\Github\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj": {
-              "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj"
+            "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj": {
+              "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj"
             }
           }
         }

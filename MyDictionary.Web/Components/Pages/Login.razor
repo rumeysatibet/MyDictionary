@@ -1,4 +1,5 @@
 @page "/login"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
 @using System.Text.Json
@@ -8,8 +9,10 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager Navigation
 @inject AuthenticationStateService AuthService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Giriş Yap - MyDictionary</PageTitle>
+
 
 <div class="login-container">
     <div class="login-card">
@@ -88,7 +91,7 @@
     private string errorMessage = "";
     private string successMessage = "";
     private bool isLoading = false;
-    private bool shouldNavigateToProfile = false;
+    private bool shouldNavigateAfterRender = false;
 
     public class LoginModel
     {
@@ -156,6 +159,10 @@
                 {
                     Logger.LogInformation("🎉 GİRİŞ BAŞARILI!");
                     
+                    AuthenticationStateService.UserInfo? userInfo = null;
+                    string token = "";
+                    bool shouldNavigate = false;
+                    
                     try
                     {
                         var authResponse = JsonSerializer.Deserialize<JsonElement>(responseContent);
@@ -164,7 +171,7 @@
                             if (authResponse.TryGetProperty("user", out var userElement))
                             {
                                 // Kullanıcı bilgilerini parse et
-                                var userInfo = new AuthenticationStateService.UserInfo
+                                userInfo = new AuthenticationStateService.UserInfo
                                 {
                                     Id = userElement.GetProperty("id").GetInt32(),
                                     Username = userElement.GetProperty("username").GetString() ?? "",
@@ -178,28 +185,15 @@
                                 };
                                 
                                 Logger.LogInformation($"👤 Kullanıcı bilgileri alındı: {userInfo.Username}");
-                                successMessage = $"Hoş geldiniz, {userInfo.Username}!";
                                 
                                 // Token'ı al
-                                var token = "";
                                 if (authResponse.TryGetProperty("token", out var tokenElement))
                                 {
                                     token = tokenElement.GetString() ?? "";
                                     Logger.LogInformation($"🔑 Token alındı (uzunluk: {token.Length})");
                                 }
                                 
-                                // Authentication state'i ayarla
-                                AuthService.SetUser(userInfo, token);
-                                Logger.LogInformation($"🔐 AuthService user set - IsAuthenticated: {AuthService.IsAuthenticated}");
-                                
-                                // Başarı mesajını göster ve navigation'ı planla
-                                successMessage = $"Hoş geldiniz, {userInfo.Username}!";
-                                StateHasChanged();
-                                
-                                // Artık localStorage kullanıyoruz, direkt navigation yapabiliriz
-                                Logger.LogInformation("🚀 Profil sayfasına yönlendiriliyor...");
-                                Navigation.NavigateTo("/profile");
-                                Logger.LogInformation("✅ Navigation.NavigateTo çağrıldı");
+                                shouldNavigate = true;
                             }
                         }
                         else
@@ -219,6 +213,27 @@
                     {
                         Logger.LogError($"❌ JSON Parse Error: {jsonEx.Message}");
                         errorMessage = "Sunucu yanıt formatı hatalı.";
+                    }
+                    
+                    // Navigation'ı try-catch dışında yap
+                    if (shouldNavigate && userInfo != null)
+                    {
+                        // Authentication state'i ayarla
+                        await AuthService.SetUserAsync(userInfo, token);
+                        Logger.LogInformation($"🔐 AuthService user set - IsAuthenticated: {AuthService.IsAuthenticated}");
+                        
+                        Logger.LogInformation("🚀 Giriş başarılı, navigation yapılacak...");
+                        
+                        // Navigation'ı InvokeAsync ile yap
+                        shouldNavigateAfterRender = true;
+                        StateHasChanged();
+                        
+                        // Hemen navigation'ı tetikle
+                        _ = InvokeAsync(async () =>
+                        {
+                            await Task.Delay(100); // Render'ın tamamlanması için kısa bekle
+                            await PerformNavigation();
+                        });
                     }
                 }
                 else
@@ -257,6 +272,12 @@
                 errorMessage = "İstek zaman aşımına uğradı. Lütfen tekrar deneyin.";
             }
         }
+        catch (Microsoft.AspNetCore.Components.NavigationException navEx)
+        {
+            Logger.LogInformation($"🔄 Top-level navigation exception (beklenen): {navEx.Message}");
+            // NavigationException normal davranış, navigation başarılı demektir
+            // Bu exception'ı hata olarak göstermeyelim
+        }
         catch (Exception ex)
         {
             Logger.LogError($"💥 GENEL HATA: {ex.Message}");
@@ -269,4 +290,46 @@
             Logger.LogInformation("🏁 GİRİŞ İŞLEMİ TAMAMLANDI");
         }
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (shouldNavigateAfterRender)
+        {
+            Logger.LogInformation("🔄 OnAfterRenderAsync çağrıldı, navigation yapılacak");
+            shouldNavigateAfterRender = false;
+            await PerformNavigation();
+        }
+    }
+
+    private async Task PerformNavigation()
+    {
+        try
+        {
+            Logger.LogInformation("🔄 Navigation başlatılıyor...");
+            await JSRuntime.InvokeVoidAsync("eval", "window.location.href = '/'");
+            Logger.LogInformation("✅ JavaScript navigation başarılı");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ JavaScript navigation hatası: {ex.Message}");
+            
+            // Fallback: Normal Blazor navigation
+            try
+            {
+                Navigation.NavigateTo("/", forceLoad: true);
+                Logger.LogInformation("✅ Fallback Blazor navigation başarılı");
+            }
+            catch (Microsoft.AspNetCore.Components.NavigationException)
+            {
+                Logger.LogInformation("🔄 NavigationException (normal)");
+            }
+            catch (Exception navEx)
+            {
+                Logger.LogError($"❌ Fallback navigation hatası: {navEx.Message}");
+                successMessage = "Giriş başarılı! Anasayfaya gitmek için sayfa yenileyin.";
+                StateHasChanged();
+            }
+        }
+    }
+
 }

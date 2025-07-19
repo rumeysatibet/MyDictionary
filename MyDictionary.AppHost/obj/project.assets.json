@@ -4594,11 +4594,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
+      "projectUniqueName": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
       "projectName": "MyDictionary.AppHost",
-      "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
+      "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
       "packagesPath": "C:\\Users\\rumey\\.nuget\\packages\\",
-      "outputPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.AppHost\\obj\\",
+      "outputPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.AppHost\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

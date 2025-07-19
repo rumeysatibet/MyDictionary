@@ -828,23 +828,23 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\lib\bootstrap\dist\js\bootstrap.min.js.map'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MyDictionary.Web.z07duyrvqw.bundle.scp.css'))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MyDictionary.Web.35qu6uclpg.bundle.scp.css'))">
       <SourceType>Package</SourceType>
       <SourceId>MyDictionary.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/MyDictionary.Web</BasePath>
-      <RelativePath>MyDictionary.Web.z07duyrvqw.bundle.scp.css</RelativePath>
+      <RelativePath>MyDictionary.Web.35qu6uclpg.bundle.scp.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>Reference</AssetMode>
       <AssetRole>Primary</AssetRole>
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ProjectBundle</AssetTraitValue>
-      <Fingerprint>z07duyrvqw</Fingerprint>
-      <Integrity>LYXh6eQf32upZR/G+EQGgrMqWb0ON7WlTjb8qRA5xxs=</Integrity>
+      <Fingerprint>35qu6uclpg</Fingerprint>
+      <Integrity>KSIIdfeOsm6H1F03EbugaQPnCC1kjIiQJ9erPPMe6f4=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MyDictionary.Web.z07duyrvqw.bundle.scp.css'))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\MyDictionary.Web.35qu6uclpg.bundle.scp.css'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

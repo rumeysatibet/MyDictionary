@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\services\\authenticationstateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\services\\authenticationstateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\components\\routes.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Program.cs",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Program.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Program.cs",
+              "RelativeToolTip": "MyDictionary.Web\\Program.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAWwCsAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-19T18:55:59.138Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthenticationStateService.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Services\\AuthenticationStateService.cs",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Services\\AuthenticationStateService.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Services\\AuthenticationStateService.cs",
+              "RelativeToolTip": "MyDictionary.Web\\Services\\AuthenticationStateService.cs",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-19T15:34:13.675Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "App.razor",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\App.razor",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\App.razor",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\App.razor",
+              "RelativeToolTip": "MyDictionary.Web\\Components\\App.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-19T15:34:05.531Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Routes.razor",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Routes.razor",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\Routes.razor",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Routes.razor",
+              "RelativeToolTip": "MyDictionary.Web\\Components\\Routes.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-19T15:34:03.852Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "bootstrap.js",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+              "RelativeToolTip": "MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+              "ViewState": "AgIAAJABAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-07-19T15:33:38.783Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MyDictionary.ApiService",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "RelativeToolTip": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAUwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-19T14:30:36.324Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

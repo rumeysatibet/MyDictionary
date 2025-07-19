@@ -13,6 +13,29 @@ builder.Services.AddProblemDetails();
 // Add controllers
 builder.Services.AddControllers();
 
+// JWT Authentication
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+        var key = jwtSettings["Key"] ?? "MyVerySecureSecretKeyForJwtTokenGeneration12345";
+        
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"] ?? "MyDictionary",
+            ValidAudience = jwtSettings["Audience"] ?? "MyDictionary",
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                System.Text.Encoding.UTF8.GetBytes(key)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 // CORS ekle
 builder.Services.AddCors(options =>
 {
@@ -43,6 +66,10 @@ app.UseExceptionHandler();
 
 // CORS'u aktif et
 app.UseCors("AllowAll");
+
+// Authentication & Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 // OpenAPI'yi her zaman aktif et (Aspire için)
 app.MapOpenApi();

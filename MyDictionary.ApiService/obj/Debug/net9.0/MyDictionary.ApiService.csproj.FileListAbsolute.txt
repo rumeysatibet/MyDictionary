@@ -73,7 +73,6 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.IO.RecyclableMemoryStream.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.OpenApi.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Mono.TextTemplating.dll
@@ -206,7 +205,6 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary.ApiService.pdb
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary.ApiService.genruntimeconfig.cache
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\ref\MyDictionary.ApiService.dll
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\appsettings.Development.json
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\appsettings.json
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\MyDictionary.ApiService.staticwebassets.endpoints.json
@@ -428,3 +426,19 @@ C:\DEV\Github\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary.ApiService.genruntimeconfig.cache
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\ref\MyDictionary.ApiService.dll
 C:\DEV\Github\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\MailKit.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.Configuration.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.Diagnostics.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.Http.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.Logging.Configuration.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.ObjectPool.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\MimeKit.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\System.IO.Pipelines.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary.ApiService.sourcelink.json
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

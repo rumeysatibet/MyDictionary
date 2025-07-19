@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MyDictionary.ApiService.Data;
 using MyDictionary.ApiService.DTOs;
 using MyDictionary.ApiService.Models;
@@ -13,17 +16,20 @@ public interface IAuthService
     Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
     Task<UserAgreementDto?> GetActiveUserAgreementAsync();
     Task<List<object>> GetAllUsersAsync();
+    Task<UserDto?> ValidateTokenAsync(string token);
 }
 
 public class AuthService : IAuthService
 {
     private readonly DictionaryDbContext _context;
     private readonly ILogger<AuthService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(DictionaryDbContext context, ILogger<AuthService> logger)
+    public AuthService(DictionaryDbContext context, ILogger<AuthService> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto, string ipAddress)
@@ -202,12 +208,80 @@ public class AuthService : IAuthService
         return HashPassword(password) == hashedPassword;
     }
 
-    private static string GenerateToken(User user)
+    private string GenerateToken(User user)
     {
-        // Basit token - gerçek uygulamada JWT kullanılmalı
-        var tokenData = $"{user.Id}:{user.Username}:{DateTime.UtcNow.Ticks}";
-        var tokenBytes = Encoding.UTF8.GetBytes(tokenData);
-        return Convert.ToBase64String(tokenBytes);
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var key = jwtSettings["Key"] ?? "MyVerySecureSecretKeyForJwtTokenGeneration12345";
+        var issuer = jwtSettings["Issuer"] ?? "MyDictionary";
+        var audience = jwtSettings["Audience"] ?? "MyDictionary";
+        
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("userId", user.Id.ToString())
+        };
+
+        var keyBytes = Encoding.UTF8.GetBytes(key);
+        var signingKey = new SymmetricSecurityKey(keyBytes);
+        var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(30), // 30 gün geçerli
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<UserDto?> ValidateTokenAsync(string token)
+    {
+        try
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var key = jwtSettings["Key"] ?? "MyVerySecureSecretKeyForJwtTokenGeneration12345";
+            var issuer = jwtSettings["Issuer"] ?? "MyDictionary";
+            var audience = jwtSettings["Audience"] ?? "MyDictionary";
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var keyBytes = Encoding.UTF8.GetBytes(key);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = issuer,
+                ValidAudience = audience,
+                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+            var userIdClaim = principal.FindFirst("userId")?.Value;
+
+            if (userIdClaim != null && int.TryParse(userIdClaim, out var userId))
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    return MapToUserDto(user);
+                }
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Token validation error");
+            return null;
+        }
     }
 
     private static UserDto MapToUserDto(User user)

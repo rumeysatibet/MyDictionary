@@ -8,5 +8,5 @@ namespace Projects;
 public class MyDictionary_AppHost
 {
     private MyDictionary_AppHost() { }
-    public static string ProjectPath => """C:\DEV\Github\MyDictionary\MyDictionary.AppHost""";
+    public static string ProjectPath => """C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.AppHost""";
 }

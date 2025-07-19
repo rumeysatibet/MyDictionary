@@ -135,6 +135,34 @@
     position: relative;
 }
 
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.message-button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.message-button:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.message-icon {
+    display: block;
+}
+
 .user-button {
     background: none;
     border: none;
@@ -176,7 +204,9 @@
 }
 
 .dropdown-item {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     padding: 10px 15px;
     color: #333;
@@ -187,6 +217,13 @@
     font-size: 14px;
     text-align: left;
     transition: background-color 0.3s;
+}
+
+.dropdown-icon {
+    font-size: 14px;
+    width: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .dropdown-item:hover {

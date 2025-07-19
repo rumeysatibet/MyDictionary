@@ -7,5 +7,5 @@ namespace Projects;
 [global::System.Diagnostics.DebuggerDisplay("Type = {GetType().Name,nq}, ProjectPath = {ProjectPath}")]
 public class MyDictionary_Web : global::Aspire.Hosting.IProjectMetadata
 {
-    public string ProjectPath => """C:\DEV\Github\MyDictionary\MyDictionary.Web\MyDictionary.Web.csproj""";
+    public string ProjectPath => """C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\MyDictionary.Web.csproj""";
 }

@@ -223,6 +223,34 @@
     position: relative;
 }
 
+.user-actions[b-g6r1pybysq] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.message-button[b-g6r1pybysq] {
+    background: none;
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+.message-button:hover[b-g6r1pybysq] {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.message-icon[b-g6r1pybysq] {
+    display: block;
+}
+
 .user-button[b-g6r1pybysq] {
     background: none;
     border: none;
@@ -264,7 +292,9 @@
 }
 
 .dropdown-item[b-g6r1pybysq] {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     padding: 10px 15px;
     color: #333;
@@ -275,6 +305,13 @@
     font-size: 14px;
     text-align: left;
     transition: background-color 0.3s;
+}
+
+.dropdown-icon[b-g6r1pybysq] {
+    font-size: 14px;
+    width: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .dropdown-item:hover[b-g6r1pybysq] {
@@ -820,6 +857,29 @@ textarea.form-control[b-pkkjsnyd4w] {
 .home-container[b-rs6hvqt280] {
     max-width: 800px;
     margin: 0 auto;
+}
+
+.welcome-section[b-rs6hvqt280] {
+    background: linear-gradient(135deg, #53925F 0%, #689068 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.welcome-message[b-rs6hvqt280] {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.welcome-subtitle[b-rs6hvqt280] {
+    font-size: 16px;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 300;
 }
 
 .section[b-rs6hvqt280] {

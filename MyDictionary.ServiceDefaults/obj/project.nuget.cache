@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "330U+uAATiw=",
+  "dgSpecHash": "SXJEV2Wll5o=",
   "success": true,
-  "projectFilePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj",
+  "projectFilePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ServiceDefaults\\MyDictionary.ServiceDefaults.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rumey\\.nuget\\packages\\google.protobuf\\3.22.5\\google.protobuf.3.22.5.nupkg.sha512",
     "C:\\Users\\rumey\\.nuget\\packages\\grpc.core.api\\2.52.0\\grpc.core.api.2.52.0.nupkg.sha512",

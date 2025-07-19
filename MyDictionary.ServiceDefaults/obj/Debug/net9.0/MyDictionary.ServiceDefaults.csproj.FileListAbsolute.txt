@@ -22,3 +22,4 @@ C:\DEV\Github\MyDictionary\MyDictionary.ServiceDefaults\obj\Debug\net9.0\MyDicti
 C:\DEV\Github\MyDictionary\MyDictionary.ServiceDefaults\obj\Debug\net9.0\refint\MyDictionary.ServiceDefaults.dll
 C:\DEV\Github\MyDictionary\MyDictionary.ServiceDefaults\obj\Debug\net9.0\MyDictionary.ServiceDefaults.pdb
 C:\DEV\Github\MyDictionary\MyDictionary.ServiceDefaults\obj\Debug\net9.0\ref\MyDictionary.ServiceDefaults.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ServiceDefaults\obj\Debug\net9.0\MyDictionary.ServiceDefaults.sourcelink.json

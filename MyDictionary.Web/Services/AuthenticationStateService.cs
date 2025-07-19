@@ -8,14 +8,16 @@ public class AuthenticationStateService
     private UserInfo? _currentUser;
     private readonly ILogger<AuthenticationStateService> _logger;
     private readonly IJSRuntime _jsRuntime;
+    private readonly HttpClient _httpClient;
     private bool _isInitialized = false;
 
     public event Action? OnAuthenticationChanged;
 
-    public AuthenticationStateService(ILogger<AuthenticationStateService> logger, IJSRuntime jsRuntime)
+    public AuthenticationStateService(ILogger<AuthenticationStateService> logger, IJSRuntime jsRuntime, HttpClient httpClient)
     {
         _logger = logger;
         _jsRuntime = jsRuntime;
+        _httpClient = httpClient;
     }
 
     public UserInfo? CurrentUser => _currentUser;
@@ -37,18 +39,41 @@ public class AuthenticationStateService
         try
         {
             _logger.LogInformation("💾 localStorage'dan kullanıcı bilgileri okunuyor...");
-            var userJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
             
-            if (!string.IsNullOrEmpty(userJson))
+            // JSInterop hazır olana kadar bekle
+            await Task.Delay(100);
+            
+            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            
+            if (!string.IsNullOrEmpty(token))
             {
-                _currentUser = JsonSerializer.Deserialize<UserInfo>(userJson);
-                _logger.LogInformation($"🔐 localStorage'dan kullanıcı yüklendi: {_currentUser?.Username}");
-                OnAuthenticationChanged?.Invoke();
+                // Token'ı sunucuda validate et
+                var isValid = await ValidateTokenWithServerAsync(token);
+                if (isValid)
+                {
+                    var userJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
+                    if (!string.IsNullOrEmpty(userJson))
+                    {
+                        _currentUser = JsonSerializer.Deserialize<UserInfo>(userJson);
+                        _logger.LogInformation($"🔐 Token geçerli, kullanıcı yüklendi: {_currentUser?.Username}");
+                        OnAuthenticationChanged?.Invoke();
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation("❌ Token geçersiz, localStorage temizleniyor");
+                    await ClearStorageAsync();
+                }
             }
             else
             {
-                _logger.LogInformation("🔍 localStorage'da kullanıcı bilgisi bulunamadı");
+                _logger.LogInformation("🔍 localStorage'da token bulunamadı");
             }
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+        {
+            _logger.LogWarning($"⚠️ localStorage okuma ertelendi (prerendering): {ex.Message}");
+            // Prerendering sırasında localStorage'dan okuyamayız
         }
         catch (Exception ex)
         {
@@ -56,49 +81,87 @@ public class AuthenticationStateService
         }
     }
 
-    public async void SetUser(UserInfo user, string token)
+    public async Task SetUserAsync(UserInfo user, string token)
     {
         _currentUser = user;
         _logger.LogInformation($"🔐 Kullanıcı giriş yaptı: {user.Username}");
         _logger.LogInformation($"🔐 IsAuthenticated: {IsAuthenticated}");
         _logger.LogInformation($"🔐 CurrentUser: {CurrentUser?.Username ?? "null"}");
         
-        // localStorage'a kaydet
-        try
-        {
-            var userJson = JsonSerializer.Serialize(user);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", userJson);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "token", token);
-            _logger.LogInformation("💾 Kullanıcı bilgileri localStorage'a kaydedildi");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"❌ localStorage yazma hatası: {ex.Message}");
-        }
+        // localStorage'a kaydet - sadece interaktif rendering sırasında
+        await SaveToStorageAsync(user, token);
         
         _logger.LogInformation("🔔 OnAuthenticationChanged event tetikleniyor");
         OnAuthenticationChanged?.Invoke();
     }
 
-    public async void Logout()
+    public async Task LogoutAsync()
     {
         var username = _currentUser?.Username ?? "Unknown";
         _currentUser = null;
         _logger.LogInformation($"🚪 Kullanıcı çıkış yaptı: {username}");
         
         // localStorage'dan temizle
+        await ClearStorageAsync();
+        
+        OnAuthenticationChanged?.Invoke();
+    }
+
+    private async Task<bool> ValidateTokenWithServerAsync(string token)
+    {
+        try
+        {
+            var request = new { Token = token };
+            var response = await _httpClient.PostAsJsonAsync("api/auth/validate-token", request);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"❌ Token validation hatası: {ex.Message}");
+            return false;
+        }
+    }
+
+    private async Task SaveToStorageAsync(UserInfo user, string token)
+    {
+        try
+        {
+            // JSInterop hazır olana kadar bekle
+            await Task.Delay(100);
+            
+            var userJson = JsonSerializer.Serialize(user);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "currentUser", userJson);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "token", token);
+            _logger.LogInformation("💾 Kullanıcı bilgileri localStorage'a kaydedildi");
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+        {
+            _logger.LogWarning($"⚠️ localStorage yazma ertelendi (prerendering): {ex.Message}");
+            // Prerendering sırasında localStorage'a yazamayız, sadece memory'de tut
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"❌ localStorage yazma hatası: {ex.Message}");
+        }
+    }
+
+    private async Task ClearStorageAsync()
+    {
         try
         {
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "currentUser");
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "token");
             _logger.LogInformation("🗑️ localStorage temizlendi");
         }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("JavaScript interop"))
+        {
+            _logger.LogWarning($"⚠️ localStorage temizleme ertelendi (prerendering): {ex.Message}");
+            // Prerendering sırasında localStorage'ı temizleyemeyiz
+        }
         catch (Exception ex)
         {
             _logger.LogError($"❌ localStorage temizleme hatası: {ex.Message}");
         }
-        
-        OnAuthenticationChanged?.Invoke();
     }
 
     public class UserInfo

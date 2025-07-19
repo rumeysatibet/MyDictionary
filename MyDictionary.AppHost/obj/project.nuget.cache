@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZatV7lQs3dc=",
+  "dgSpecHash": "Gxdjq5ZK/YI=",
   "success": true,
-  "projectFilePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
+  "projectFilePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.AppHost\\MyDictionary.AppHost.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rumey\\.nuget\\packages\\aspire.dashboard.sdk.win-x64\\9.3.1\\aspire.dashboard.sdk.win-x64.9.3.1.nupkg.sha512",
     "C:\\Users\\rumey\\.nuget\\packages\\aspire.hosting\\9.3.1\\aspire.hosting.9.3.1.nupkg.sha512",

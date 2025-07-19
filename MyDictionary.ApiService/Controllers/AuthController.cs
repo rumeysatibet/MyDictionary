@@ -74,6 +74,24 @@ public class AuthController : ControllerBase
         return Ok(agreement);
     }
 
+    [HttpPost("validate-token")]
+    public async Task<ActionResult<UserDto>> ValidateToken([FromBody] TokenValidationDto tokenDto)
+    {
+        if (string.IsNullOrEmpty(tokenDto.Token))
+        {
+            return BadRequest(new { Message = "Token gerekli." });
+        }
+
+        var user = await _authService.ValidateTokenAsync(tokenDto.Token);
+        
+        if (user == null)
+        {
+            return Unauthorized(new { Message = "Geçersiz veya süresi dolmuş token." });
+        }
+        
+        return Ok(user);
+    }
+
     [HttpGet("debug/users")]
     public async Task<ActionResult> GetAllUsers()
     {
