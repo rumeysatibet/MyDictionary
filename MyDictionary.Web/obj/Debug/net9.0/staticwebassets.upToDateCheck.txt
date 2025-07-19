@@ -24,6 +24,7 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\d
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.js
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\js\messages.js
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
@@ -45,6 +46,7 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\d
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
 wwwroot\app.css
 wwwroot\favicon.png
+wwwroot\js\messages.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
 wwwroot\lib\bootstrap\dist\css\bootstrap.min.css

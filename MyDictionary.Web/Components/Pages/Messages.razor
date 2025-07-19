@@ -1,0 +1,510 @@
+@page "/messages"
+@page "/messages/{username}"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Text
+@using MyDictionary.Web.Services
+@inject ILogger<Messages> Logger
+@inject AuthenticationStateService AuthService
+@inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Mesajlar - MyDictionary</PageTitle>
+
+<div class="messages-container">
+    <div class="messages-layout">
+        <!-- Sol Panel - Konuşma Listesi -->
+        <div class="conversations-panel">
+            <div class="conversations-header">
+                <h3>Mesajlar</h3>
+            </div>
+            <div class="conversations-list">
+                @if (conversations.Any())
+                {
+                    @foreach (var conversation in conversations)
+                    {
+                        <div class="conversation-item @(selectedConversation?.Id == conversation.Id ? "active" : "")" 
+                             @onclick="() => SelectConversation(conversation)">
+                            <div class="conversation-avatar">
+                                @if (!string.IsNullOrEmpty(conversation.OtherUser.ProfilePhotoUrl))
+                                {
+                                    <img src="https://apiservice/uploads/profiles/@conversation.OtherUser.ProfilePhotoUrl" alt="@conversation.OtherUser.Username" />
+                                }
+                                else
+                                {
+                                    <div class="default-avatar-mini">@GetUserInitials(conversation.OtherUser.Username)</div>
+                                }
+                            </div>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <span class="username">@conversation.OtherUser.Username</span>
+                                    <span class="time">@GetTimeAgo(conversation.LastMessageAt)</span>
+                                </div>
+                                <div class="last-message">
+                                    @if (conversation.LastMessage != null)
+                                    {
+                                        <span class="@(!conversation.LastMessage.IsRead && conversation.LastMessage.SenderId != AuthService.CurrentUser?.Id ? "unread" : "")">
+                                            @(conversation.LastMessage.Content.Length > 50 ? conversation.LastMessage.Content.Substring(0, 50) + "..." : conversation.LastMessage.Content)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="no-messages">Henüz mesaj yok</span>
+                                    }
+                                </div>
+                            </div>
+                            @if (conversation.UnreadCount > 0)
+                            {
+                                <div class="unread-badge">@conversation.UnreadCount</div>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-conversations">
+                        <p>Henüz mesaj konuşmanız yok.</p>
+                        <p>Arkadaşlarınızın profillerine giderek mesaj gönderebilirsiniz.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sağ Panel - Seçili Konuşma -->
+        <div class="chat-panel">
+            @if (selectedConversation != null)
+            {
+                <div class="chat-header">
+                    <div class="chat-user-info">
+                        <div class="chat-avatar">
+                            @if (!string.IsNullOrEmpty(selectedConversation.OtherUser.ProfilePhotoUrl))
+                            {
+                                <img src="https://apiservice/uploads/profiles/@selectedConversation.OtherUser.ProfilePhotoUrl" alt="@selectedConversation.OtherUser.Username" />
+                            }
+                            else
+                            {
+                                <div class="default-avatar-mini">@GetUserInitials(selectedConversation.OtherUser.Username)</div>
+                            }
+                        </div>
+                        <div>
+                            <h4>@selectedConversation.OtherUser.Username</h4>
+                            <button class="view-profile-btn" @onclick="() => ViewProfile(selectedConversation.OtherUser.Username)">
+                                Profili görüntüle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" @ref="messagesContainer">
+                    @if (messages.Any())
+                    {
+                        @foreach (var message in messages)
+                        {
+                            var isOwn = message.Sender.Id == AuthService.CurrentUser?.Id;
+                            <div class="message @(isOwn ? "own" : "other")">
+                                @if (!isOwn)
+                                {
+                                    <div class="message-avatar">
+                                        @if (!string.IsNullOrEmpty(message.Sender.ProfilePhotoUrl))
+                                        {
+                                            <img src="https://apiservice/uploads/profiles/@message.Sender.ProfilePhotoUrl" alt="@message.Sender.Username" />
+                                        }
+                                        else
+                                        {
+                                            <div class="default-avatar-tiny">@GetUserInitials(message.Sender.Username)</div>
+                                        }
+                                    </div>
+                                }
+                                <div class="message-content">
+                                    <div class="message-bubble">
+                                        <p>@message.Content</p>
+                                    </div>
+                                    <div class="message-time">
+                                        @message.CreatedAt.ToString("HH:mm")
+                                        @if (isOwn && message.IsRead)
+                                        {
+                                            <span class="read-indicator">✓✓</span>
+                                        }
+                                        else if (isOwn)
+                                        {
+                                            <span class="sent-indicator">✓</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-messages-chat">
+                            <p>@selectedConversation.OtherUser.Username ile mesajlaşmaya başlayın!</p>
+                        </div>
+                    }
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input">
+                        <textarea @bind="newMessage" 
+                                  @onkeydown="HandleKeyDown"
+                                  placeholder="Mesajınızı yazın..." 
+                                  rows="1" 
+                                  maxlength="1000"></textarea>
+                        <button class="send-button" @onclick="SendMessage" disabled="@(string.IsNullOrWhiteSpace(newMessage) || isSending)">
+                            @if (isSending)
+                            {
+                                <span>⏳</span>
+                            }
+                            else
+                            {
+                                <span>📤</span>
+                            }
+                        </button>
+                    </div>
+                    <div class="char-count">@(1000 - newMessage.Length) karakter kaldı</div>
+                </div>
+            }
+            else
+            {
+                <div class="no-chat-selected">
+                    <div class="no-chat-content">
+                        <span class="chat-icon">💬</span>
+                        <h3>Bir konuşma seçin</h3>
+                        <p>Mesajlaşmaya başlamak için sol taraftan bir konuşma seçin.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Username { get; set; }
+    
+    private List<ConversationModel> conversations = new();
+    private List<MessageModel> messages = new();
+    private ConversationModel? selectedConversation;
+    private string newMessage = "";
+    private bool isSending = false;
+    private ElementReference messagesContainer;
+    private System.Threading.Timer? refreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Logger.LogInformation("💬 Messages sayfası yükleniyor...");
+        
+        await AuthService.InitializeAsync();
+        
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AuthService.LoadFromStorageAsync();
+            
+            if (!AuthService.IsAuthenticated)
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            await LoadConversations();
+            
+            // URL'de username varsa o konuşmayı seç
+            if (!string.IsNullOrEmpty(Username))
+            {
+                var conversation = conversations.FirstOrDefault(c => 
+                    c.OtherUser.Username.Equals(Username, StringComparison.OrdinalIgnoreCase));
+                if (conversation != null)
+                {
+                    await SelectConversation(conversation);
+                }
+            }
+            
+            StartRefreshTimer();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadConversations()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync("https://apiservice/api/messages/conversations");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    conversations.Clear();
+
+                    if (apiResponse.TryGetProperty("conversations", out var conversationsElement))
+                    {
+                        foreach (var convElement in conversationsElement.EnumerateArray())
+                        {
+                            var conversation = new ConversationModel
+                            {
+                                Id = convElement.GetProperty("id").GetInt32(),
+                                LastMessageAt = convElement.GetProperty("lastMessageAt").GetDateTime(),
+                                UnreadCount = convElement.GetProperty("unreadCount").GetInt32()
+                            };
+
+                            if (convElement.TryGetProperty("otherUser", out var otherUserElement))
+                            {
+                                conversation.OtherUser = new UserModel
+                                {
+                                    Id = otherUserElement.GetProperty("id").GetInt32(),
+                                    Username = otherUserElement.GetProperty("username").GetString() ?? "",
+                                    ProfilePhotoUrl = otherUserElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null
+                                };
+                            }
+
+                            if (convElement.TryGetProperty("lastMessage", out var lastMessageElement) && lastMessageElement.ValueKind != JsonValueKind.Null)
+                            {
+                                conversation.LastMessage = new LastMessageModel
+                                {
+                                    Content = lastMessageElement.GetProperty("content").GetString() ?? "",
+                                    CreatedAt = lastMessageElement.GetProperty("createdAt").GetDateTime(),
+                                    IsRead = lastMessageElement.GetProperty("isRead").GetBoolean(),
+                                    SenderId = lastMessageElement.GetProperty("senderId").GetInt32()
+                                };
+                            }
+
+                            conversations.Add(conversation);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Konuşmalar yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task SelectConversation(ConversationModel conversation)
+    {
+        selectedConversation = conversation;
+        await LoadMessages(conversation.OtherUser.Id);
+        
+        // URL'yi güncelle - NavigationException'ı önlemek için try-catch ile wrap edildi
+        try
+        {
+            Navigation.NavigateTo($"/messages/{conversation.OtherUser.Username}", false);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning($"⚠️ Navigation güncelleme hatası (göz ardı edildi): {ex.Message}");
+        }
+    }
+
+    private async Task LoadMessages(int otherUserId)
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync($"https://apiservice/api/messages/conversation/{otherUserId}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    messages.Clear();
+
+                    if (apiResponse.TryGetProperty("messages", out var messagesElement))
+                    {
+                        foreach (var msgElement in messagesElement.EnumerateArray())
+                        {
+                            var message = new MessageModel
+                            {
+                                Id = msgElement.GetProperty("id").GetInt32(),
+                                Content = msgElement.GetProperty("content").GetString() ?? "",
+                                CreatedAt = msgElement.GetProperty("createdAt").GetDateTime(),
+                                IsRead = msgElement.GetProperty("isRead").GetBoolean()
+                            };
+
+                            if (msgElement.TryGetProperty("sender", out var senderElement))
+                            {
+                                message.Sender = new UserModel
+                                {
+                                    Id = senderElement.GetProperty("id").GetInt32(),
+                                    Username = senderElement.GetProperty("username").GetString() ?? "",
+                                    ProfilePhotoUrl = senderElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null
+                                };
+                            }
+
+                            messages.Add(message);
+                        }
+                    }
+
+                    // Mesajlar yüklendikten sonra en alta scroll
+                    await Task.Delay(100);
+                    await ScrollToBottom();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Mesajlar yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(newMessage) || selectedConversation == null || isSending) return;
+
+        isSending = true;
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var sendRequest = new { ReceiverId = selectedConversation.OtherUser.Id, Content = newMessage.Trim() };
+            var json = JsonSerializer.Serialize(sendRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("https://apiservice/api/messages/send", content);
+            if (response.IsSuccessStatusCode)
+            {
+                newMessage = "";
+                await LoadMessages(selectedConversation.OtherUser.Id);
+                await LoadConversations(); // Konuşma listesini de güncelle
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Mesaj gönderme hatası: {ex.Message}");
+        }
+        finally
+        {
+            isSending = false;
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+        {
+            await SendMessage();
+        }
+    }
+
+    private async Task ScrollToBottom()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("scrollToBottom", messagesContainer);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Scroll hatası: {ex.Message}");
+        }
+    }
+
+    private void StartRefreshTimer()
+    {
+        // Her 10 saniyede bir konuşmaları ve mesajları güncelle
+        refreshTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await LoadConversations();
+                if (selectedConversation != null)
+                {
+                    await LoadMessages(selectedConversation.OtherUser.Id);
+                }
+                StateHasChanged();
+            });
+        }, null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+    }
+
+    private void ViewProfile(string username)
+    {
+        Navigation.NavigateTo($"/profile/{username}");
+    }
+
+    private string GetUserInitials(string username)
+    {
+        if (string.IsNullOrEmpty(username)) return "?";
+        return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan.TotalMinutes < 1) return "az önce";
+        if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes}dk önce";
+        if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours}sa önce";
+        if (timeSpan.TotalDays < 7) return $"{(int)timeSpan.TotalDays}gün önce";
+        
+        return dateTime.ToString("dd.MM.yyyy");
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+
+    public class ConversationModel
+    {
+        public int Id { get; set; }
+        public DateTime LastMessageAt { get; set; }
+        public int UnreadCount { get; set; }
+        public UserModel OtherUser { get; set; } = new();
+        public LastMessageModel? LastMessage { get; set; }
+    }
+
+    public class MessageModel
+    {
+        public int Id { get; set; }
+        public string Content { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+        public UserModel Sender { get; set; } = new();
+    }
+
+    public class LastMessageModel
+    {
+        public string Content { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+        public int SenderId { get; set; }
+    }
+
+    public class UserModel
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+    }
+}

@@ -19,4 +19,11 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
     public string Role { get; set; } = "User"; // "User", "Admin"
+    
+    // Profile bilgileri
+    public string? About { get; set; }
+    public string? ProfilePhotoUrl { get; set; }
+    public int FollowerCount { get; set; } = 0;
+    public int FollowingCount { get; set; } = 0;
+    public int EntryCount { get; set; } = 0;
 }

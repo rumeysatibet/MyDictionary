@@ -441,4 +441,5 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\System.IO.Pipelines.dll
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\MyDictionary.ApiService.sourcelink.json
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\bin\Debug\net9.0\MyDictionary.ApiService.staticwebassets.runtime.json
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.ApiService\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -3,10 +3,14 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Text
 @using MyDictionary.Web.Services
 @inject ILogger<Profile> Logger
 @inject AuthenticationStateService AuthService
 @inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JSRuntime
 
 <PageTitle>@GetPageTitle() - MyDictionary</PageTitle>
 
@@ -19,7 +23,7 @@
                     <div class="profile-photo">
                         @if (!string.IsNullOrEmpty(currentUser.ProfilePhotoUrl))
                         {
-                            <img src="@currentUser.ProfilePhotoUrl" alt="@currentUser.Username" />
+                            <img src="https://apiservice/uploads/profiles/@currentUser.ProfilePhotoUrl" alt="@currentUser.Username" />
                         }
                         else
                         {
@@ -65,12 +69,36 @@
                         @if (!IsOwnProfile() && AuthService.IsAuthenticated)
                         {
                             <div class="profile-actions">
-                                <button class="btn btn-follow @(isFollowing ? "following" : "")" @onclick="ToggleFollow">
-                                    @(isFollowing ? "takip ediliyor" : "takip et")
-                                </button>
-                                <button class="btn btn-message" @onclick="SendMessage">
-                                    mesaj gönder
-                                </button>
+                                @if (relationshipStatus == "friend")
+                                {
+                                    <button class="btn btn-friends" disabled>
+                                        ✓ arkadaş
+                                    </button>
+                                    <button class="btn btn-message" @onclick="SendMessage">
+                                        mesaj gönder
+                                    </button>
+                                }
+                                else if (relationshipStatus == "request_sent")
+                                {
+                                    <button class="btn btn-pending" disabled>
+                                        istek gönderildi
+                                    </button>
+                                }
+                                else if (relationshipStatus == "request_received")
+                                {
+                                    <button class="btn btn-accept" @onclick="AcceptFriendRequest">
+                                        arkadaşlığı kabul et
+                                    </button>
+                                    <button class="btn btn-reject" @onclick="RejectFriendRequest">
+                                        reddet
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-add-friend" @onclick="SendFriendRequest">
+                                        arkadaş ekle
+                                    </button>
+                                }
                             </div>
                         }
                     </div>
@@ -285,6 +313,8 @@
     private string aboutText = "";
     private IBrowserFile? selectedPhoto;
     private bool isFollowing = false;
+    private string relationshipStatus = "none"; // none, friend, request_sent, request_received
+    private int? pendingRequestId = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -339,39 +369,53 @@
     {
         try
         {
-            if (IsOwnProfile() && AuthService.CurrentUser != null)
-            {
-                // Kendi profilini göster
-                currentUser = new UserProfileModel
-                {
-                    Username = AuthService.CurrentUser.Username,
-                    CreatedAt = AuthService.CurrentUser.CreatedAt,
-                    EntryCount = 42, // Bu API'den gelecek
-                    FollowerCount = 18, // Bu API'den gelecek
-                    FollowingCount = 25, // Bu API'den gelecek
-                    About = "yazılım geliştirme alanında deneyimim var. özellikle .net ve javascript teknolojilerine odaklanıyorum."
-                };
-            }
-            else if (!string.IsNullOrEmpty(username))
-            {
-                // Başka kullanıcının profilini göster (simulated data)
-                currentUser = new UserProfileModel
-                {
-                    Username = username,
-                    CreatedAt = DateTime.Now.AddDays(-200), // Simulated
-                    EntryCount = 76, // Bu API'den gelecek
-                    FollowerCount = 234, // Bu API'den gelecek
-                    FollowingCount = 89, // Bu API'den gelecek
-                    About = $"{username} kullanıcısının profil açıklaması burada yer alıyor."
-                };
-            }
+            Logger.LogInformation($"📄 Profile API çağrısı başlatılıyor - Username: {username}");
             
-            aboutText = currentUser.About ?? "";
-            Logger.LogInformation($"👤 Profil yüklendi: {currentUser.Username}");
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetAsync($"https://apiservice/api/profile/{username}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("user", out var userElement))
+                    {
+                        currentUser = new UserProfileModel
+                        {
+                            Id = userElement.GetProperty("id").GetInt32(),
+                            Username = userElement.GetProperty("username").GetString() ?? "",
+                            ProfilePhotoUrl = userElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null,
+                            CreatedAt = userElement.GetProperty("createdAt").GetDateTime(),
+                            EntryCount = userElement.GetProperty("entryCount").GetInt32(),
+                            FollowerCount = userElement.GetProperty("followerCount").GetInt32(),
+                            FollowingCount = userElement.GetProperty("followingCount").GetInt32(),
+                            About = userElement.TryGetProperty("about", out var aboutElement) ? aboutElement.GetString() : null
+                        };
+                        
+                        aboutText = currentUser.About ?? "";
+                        Logger.LogInformation($"✅ Profile API'den yüklendi: {currentUser.Username}");
+                        
+                        // İlişki durumunu kontrol et (sadece başka kullanıcılar için)
+                        if (!IsOwnProfile() && AuthService.IsAuthenticated)
+                        {
+                            await LoadRelationshipStatus();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Logger.LogError($"❌ Profile API hatası - Status: {response.StatusCode}");
+                currentUser = null;
+            }
         }
         catch (Exception ex)
         {
             Logger.LogError($"❌ Profil yükleme hatası: {ex.Message}");
+            currentUser = null;
         }
     }
 
@@ -413,15 +457,54 @@
 
     private async Task UploadPhoto()
     {
-        if (selectedPhoto == null) return;
+        if (selectedPhoto == null || !IsOwnProfile()) return;
 
         isUploadingPhoto = true;
         try
         {
-            // Fotoğraf yükleme API çağrısı burada yapılacak
-            await Task.Delay(2000); // Simülasyon
-            Logger.LogInformation($"Profil fotoğrafı yüklendi: {selectedPhoto.Name}");
-            ClosePhotoUpload();
+            Logger.LogInformation($"📷 Profil fotoğrafı yükleme başlatılıyor: {selectedPhoto.Name}");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            // MultipartFormDataContent oluştur
+            using var formData = new MultipartFormDataContent();
+            using var fileStream = selectedPhoto.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024); // 5MB limit
+            using var streamContent = new StreamContent(fileStream);
+            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(selectedPhoto.ContentType);
+            formData.Add(streamContent, "photo", selectedPhoto.Name);
+            
+            var response = await httpClient.PostAsync("https://apiservice/api/profile/upload-photo", formData);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                if (apiResponse.TryGetProperty("photoUrl", out var photoElement))
+                {
+                    currentUser.ProfilePhotoUrl = photoElement.GetString();
+                    Logger.LogInformation($"✅ Profil fotoğrafı yüklendi: {selectedPhoto.Name}");
+                }
+                
+                ClosePhotoUpload();
+            }
+            else
+            {
+                Logger.LogError($"❌ Profil fotoğrafı yükleme hatası - Status: {response.StatusCode}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Error Content: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Profil fotoğrafı yükleme hatası: {ex.Message}");
         }
         finally
         {
@@ -443,14 +526,43 @@
 
     private async Task SaveAbout()
     {
+        if (!IsOwnProfile()) return;
+        
         isSavingAbout = true;
         try
         {
-            // API çağrısı burada yapılacak
-            await Task.Delay(1000); // Simülasyon
-            currentUser.About = aboutText;
-            isEditingAbout = false;
-            Logger.LogInformation("Hakkımda bölümü güncellendi");
+            Logger.LogInformation("📝 About güncelleme API çağrısı başlatılıyor");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var updateRequest = new { About = aboutText };
+            var json = JsonSerializer.Serialize(updateRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            var response = await httpClient.PutAsync("https://apiservice/api/profile/update", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                currentUser.About = aboutText;
+                isEditingAbout = false;
+                Logger.LogInformation("✅ About başarıyla güncellendi");
+            }
+            else
+            {
+                Logger.LogError($"❌ About güncelleme hatası - Status: {response.StatusCode}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Error Content: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ About güncelleme hatası: {ex.Message}");
         }
         finally
         {
@@ -529,12 +641,181 @@
 
     private async Task SendMessage()
     {
-        // Mesaj gönderme işlemi - mesaj sayfasına yönlendirme
-        Navigation.NavigateTo($"/messages/new/{username}");
+        // Mesaj sayfasına yönlendirme
+        Navigation.NavigateTo($"/messages/{username}");
+    }
+
+    private async Task LoadRelationshipStatus()
+    {
+        try
+        {
+            if (currentUser == null) return;
+            
+            Logger.LogInformation($"👥 İlişki durumu kontrol ediliyor - {username}");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            var response = await httpClient.GetAsync($"https://apiservice/api/user/{currentUser.Id}/relationship");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("relationship", out var relationshipElement))
+                    {
+                        relationshipStatus = relationshipElement.GetString() ?? "none";
+                        
+                        if (relationshipStatus == "request_received" && apiResponse.TryGetProperty("requestId", out var requestIdElement))
+                        {
+                            pendingRequestId = requestIdElement.GetInt32();
+                        }
+                        
+                        Logger.LogInformation($"✅ İlişki durumu: {relationshipStatus}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ İlişki durumu yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task SendFriendRequest()
+    {
+        try
+        {
+            if (currentUser == null) return;
+            
+            Logger.LogInformation($"👋 Arkadaşlık isteği gönderiliyor - {username}");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            var requestData = new { ReceiverId = currentUser.Id };
+            var json = JsonSerializer.Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            var response = await httpClient.PostAsync("https://apiservice/api/friends/send-request", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                relationshipStatus = "request_sent";
+                Logger.LogInformation($"✅ Arkadaşlık isteği gönderildi - {username}");
+                StateHasChanged();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Arkadaşlık isteği gönderme hatası: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Arkadaşlık isteği gönderme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task AcceptFriendRequest()
+    {
+        try
+        {
+            if (pendingRequestId == null) return;
+            
+            Logger.LogInformation($"✅ Arkadaşlık isteği kabul ediliyor - RequestId: {pendingRequestId}");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            var response = await httpClient.PostAsync($"https://apiservice/api/friends/{pendingRequestId}/accept", null);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                relationshipStatus = "friend";
+                pendingRequestId = null;
+                // Takipçi sayısını artır
+                if (currentUser != null)
+                {
+                    currentUser.FollowerCount++;
+                }
+                Logger.LogInformation($"✅ Arkadaşlık isteği kabul edildi - {username}");
+                StateHasChanged();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Arkadaşlık isteği kabul etme hatası: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Arkadaşlık isteği kabul etme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task RejectFriendRequest()
+    {
+        try
+        {
+            if (pendingRequestId == null) return;
+            
+            Logger.LogInformation($"❌ Arkadaşlık isteği reddediliyor - RequestId: {pendingRequestId}");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // JWT token'ı header'a ekle
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            var response = await httpClient.PostAsync($"https://apiservice/api/friends/{pendingRequestId}/reject", null);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                relationshipStatus = "none";
+                pendingRequestId = null;
+                Logger.LogInformation($"❌ Arkadaşlık isteği reddedildi - {username}");
+                StateHasChanged();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Arkadaşlık isteği reddetme hatası: {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Arkadaşlık isteği reddetme hatası: {ex.Message}");
+        }
     }
 
     public class UserProfileModel
     {
+        public int Id { get; set; }
         public string Username { get; set; } = "";
         public string? ProfilePhotoUrl { get; set; }
         public DateTime CreatedAt { get; set; }

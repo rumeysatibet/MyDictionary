@@ -2,7 +2,7 @@
   "Files": [
     {
       "Id": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MyDictionary.Web.bundle.scp.css",
-      "PackagePath": "staticwebassets\\MyDictionary.Web.t11ixb9sd6.bundle.scp.css"
+      "PackagePath": "staticwebassets\\MyDictionary.Web.kz9ej07h6c.bundle.scp.css"
     },
     {
       "Id": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\app.css",
@@ -11,6 +11,10 @@
     {
       "Id": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js",
+      "PackagePath": "staticwebassets\\js\\messages.js"
     },
     {
       "Id": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",

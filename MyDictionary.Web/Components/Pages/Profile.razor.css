@@ -558,3 +558,74 @@
         width: 100%;
     }
 }
+
+/* Friend Request Buttons */
+.btn-add-friend {
+    background-color: #53925F;
+    color: white;
+    border: 1px solid #53925F;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-add-friend:hover {
+    background-color: #4A7C54;
+    border-color: #4A7C54;
+}
+
+.btn-friends {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.btn-pending {
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.btn-accept {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-accept:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-reject {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-reject:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}

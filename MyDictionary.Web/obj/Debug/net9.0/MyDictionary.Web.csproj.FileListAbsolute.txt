@@ -272,6 +272,8 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scoped
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scopedcss\Components\Pages\Rules.razor.rz.scp.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scopedcss\Components\Pages\UserAgreement.razor.rz.scp.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\jvcbtaqksi-qv3nfca6jb.gz
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scopedcss\Components\Pages\Messages.razor.rz.scp.css
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\h00y8zsd81-2vgo85tiw6.gz
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\pmdf9zqhye-kz9ej07h6c.gz
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\y5pozj0ymu-kz9ej07h6c.gz
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\pmdf9zqhye-t11ixb9sd6.gz
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\y5pozj0ymu-t11ixb9sd6.gz

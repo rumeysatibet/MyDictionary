@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "LaHc3o+yQSX/8r8xYkIaxGut/ObnJ1qhYVT1asq+Ljc=",
+  "Hash": "3CdjDChAPiEzTcdGG7w+se1cglzVgYxarGPFw+vBH0E=",
   "Source": "MyDictionary.Web",
   "BasePath": "_content/MyDictionary.Web",
   "Mode": "Default",
@@ -563,6 +563,27 @@
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
     },
     {
+      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h00y8zsd81-2vgo85tiw6.gz",
+      "SourceId": "MyDictionary.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/MyDictionary.Web",
+      "RelativePath": "js/messages#[.{fingerprint=2vgo85tiw6}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "fm5lwo4iqm",
+      "Integrity": "SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js"
+    },
+    {
       "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h9p3by5cnc-ynyaa8k90p.gz",
       "SourceId": "MyDictionary.Web",
       "SourceType": "Discovered",
@@ -731,12 +752,12 @@
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
     },
     {
-      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-t11ixb9sd6.gz",
+      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-kz9ej07h6c.gz",
       "SourceId": "MyDictionary.Web",
       "SourceType": "Computed",
       "ContentRoot": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/MyDictionary.Web",
-      "RelativePath": "MyDictionary.Web#[.{fingerprint=t11ixb9sd6}]?.styles.css.gz",
+      "RelativePath": "MyDictionary.Web#[.{fingerprint=kz9ej07h6c}]?.styles.css.gz",
       "AssetKind": "All",
       "AssetMode": "CurrentProject",
       "AssetRole": "Alternative",
@@ -745,8 +766,8 @@
       "RelatedAsset": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "mtlr5bxeiv",
-      "Integrity": "OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=",
+      "Fingerprint": "us9sv4uwt1",
+      "Integrity": "YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css"
@@ -941,12 +962,12 @@
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
     },
     {
-      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-t11ixb9sd6.gz",
+      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-kz9ej07h6c.gz",
       "SourceId": "MyDictionary.Web",
       "SourceType": "Computed",
       "ContentRoot": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/MyDictionary.Web",
-      "RelativePath": "MyDictionary.Web#[.{fingerprint=t11ixb9sd6}]!.bundle.scp.css.gz",
+      "RelativePath": "MyDictionary.Web#[.{fingerprint=kz9ej07h6c}]!.bundle.scp.css.gz",
       "AssetKind": "All",
       "AssetMode": "Reference",
       "AssetRole": "Alternative",
@@ -955,8 +976,8 @@
       "RelatedAsset": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MyDictionary.Web.bundle.scp.css",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "mtlr5bxeiv",
-      "Integrity": "OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=",
+      "Fingerprint": "us9sv4uwt1",
+      "Integrity": "YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MyDictionary.Web.bundle.scp.css"
@@ -1018,8 +1039,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ApplicationBundle",
-      "Fingerprint": "t11ixb9sd6",
-      "Integrity": "0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=",
+      "Fingerprint": "kz9ej07h6c",
+      "Integrity": "EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css"
@@ -1039,8 +1060,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ProjectBundle",
-      "Fingerprint": "t11ixb9sd6",
-      "Integrity": "0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=",
+      "Fingerprint": "kz9ej07h6c",
+      "Integrity": "EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MyDictionary.Web.bundle.scp.css"
@@ -1086,6 +1107,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.png"
+    },
+    {
+      "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js",
+      "SourceId": "MyDictionary.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\",
+      "BasePath": "_content/MyDictionary.Web",
+      "RelativePath": "js/messages#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "2vgo85tiw6",
+      "Integrity": "ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\messages.js"
     },
     {
       "Identity": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
@@ -2390,6 +2432,304 @@
         {
           "Name": "integrity",
           "Value": "sha256-rO23F1Ag1dSur1syJkhaVi93jlQ2BPeKAWBx/iptQVA="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.2vgo85tiw6.js",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h00y8zsd81-2vgo85tiw6.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.003787878788"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "263"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "2vgo85tiw6"
+        },
+        {
+          "Name": "label",
+          "Value": "js/messages.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.2vgo85tiw6.js",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "564"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "2vgo85tiw6"
+        },
+        {
+          "Name": "label",
+          "Value": "js/messages.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.2vgo85tiw6.js.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h00y8zsd81-2vgo85tiw6.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "263"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "2vgo85tiw6"
+        },
+        {
+          "Name": "label",
+          "Value": "js/messages.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.js",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h00y8zsd81-2vgo85tiw6.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.003787878788"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "263"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.js",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\js\\messages.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "564"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ogh/lah1jj3E46U31SUaF/+DJ42sxkze1K+HMMIBRLE="
+        }
+      ]
+    },
+    {
+      "Route": "js/messages.js.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\h00y8zsd81-2vgo85tiw6.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "263"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:32:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-SbC+5znqADjEtKK4/uKs/lqg8Lp2I9CXNhMtLrj9thw="
         }
       ]
     },
@@ -15507,12 +15847,12 @@
     },
     {
       "Route": "MyDictionary.Web.bundle.scp.css",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-t11ixb9sd6.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-kz9ej07h6c.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000138370001"
+          "Quality": "0.000110436223"
         }
       ],
       "ResponseHeaders": [
@@ -15522,15 +15862,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15550,13 +15890,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "W/\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
@@ -15571,7 +15911,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "47085"
+          "Value": "63928"
         },
         {
           "Name": "Content-Type",
@@ -15579,11 +15919,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15593,13 +15933,13 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
     {
       "Route": "MyDictionary.Web.bundle.scp.css.gz",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-t11ixb9sd6.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-kz9ej07h6c.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -15608,7 +15948,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "Content-Type",
@@ -15616,11 +15956,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15638,18 +15978,18 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA="
+          "Value": "sha256-YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.styles.css",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-t11ixb9sd6.gz",
+      "Route": "MyDictionary.Web.kz9ej07h6c.bundle.scp.css",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-kz9ej07h6c.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000138370001"
+          "Quality": "0.000110436223"
         }
       ],
       "ResponseHeaders": [
@@ -15659,152 +15999,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "W/\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
-        }
-      ]
-    },
-    {
-      "Route": "MyDictionary.Web.styles.css",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "47085"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
-        }
-      ]
-    },
-    {
-      "Route": "MyDictionary.Web.styles.css.gz",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-t11ixb9sd6.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "7226"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA="
-        }
-      ]
-    },
-    {
-      "Route": "MyDictionary.Web.t11ixb9sd6.bundle.scp.css",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-t11ixb9sd6.gz",
-      "Selectors": [
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip",
-          "Quality": "0.000138370001"
-        }
-      ],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "7226"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15824,13 +16027,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "W/\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -15838,12 +16041,12 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.t11ixb9sd6.bundle.scp.css",
+      "Route": "MyDictionary.Web.kz9ej07h6c.bundle.scp.css",
       "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\projectbundle\\MyDictionary.Web.bundle.scp.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -15853,7 +16056,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "47085"
+          "Value": "63928"
         },
         {
           "Name": "Content-Type",
@@ -15861,11 +16064,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15875,7 +16078,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -15883,13 +16086,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.t11ixb9sd6.bundle.scp.css.gz",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-t11ixb9sd6.gz",
+      "Route": "MyDictionary.Web.kz9ej07h6c.bundle.scp.css.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\y5pozj0ymu-kz9ej07h6c.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -15898,7 +16101,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "Content-Type",
@@ -15906,11 +16109,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15928,7 +16131,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -15936,18 +16139,18 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA="
+          "Value": "sha256-YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.t11ixb9sd6.styles.css",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-t11ixb9sd6.gz",
+      "Route": "MyDictionary.Web.kz9ej07h6c.styles.css",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-kz9ej07h6c.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.000138370001"
+          "Quality": "0.000110436223"
         }
       ],
       "ResponseHeaders": [
@@ -15957,15 +16160,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15985,13 +16188,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "W/\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -15999,12 +16202,12 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.t11ixb9sd6.styles.css",
+      "Route": "MyDictionary.Web.kz9ej07h6c.styles.css",
       "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -16014,7 +16217,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "47085"
+          "Value": "63928"
         },
         {
           "Name": "Content-Type",
@@ -16022,11 +16225,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc=\""
+          "Value": "\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16036,7 +16239,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -16044,13 +16247,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-0TI724cHwAVc7afM1tt5h65/Fdngpvqfr2g7lhBjAhc="
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
         }
       ]
     },
     {
-      "Route": "MyDictionary.Web.t11ixb9sd6.styles.css.gz",
-      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-t11ixb9sd6.gz",
+      "Route": "MyDictionary.Web.kz9ej07h6c.styles.css.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-kz9ej07h6c.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -16059,7 +16262,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "7226"
+          "Value": "9054"
         },
         {
           "Name": "Content-Type",
@@ -16067,11 +16270,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA=\""
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Jul 2025 19:32:27 GMT"
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -16089,7 +16292,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "t11ixb9sd6"
+          "Value": "kz9ej07h6c"
         },
         {
           "Name": "label",
@@ -16097,7 +16300,144 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-OmhfejelfFZT7qg5b7imc9WJGPgIEA+g6tisj5XjUuA="
+          "Value": "sha256-YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4="
+        }
+      ]
+    },
+    {
+      "Route": "MyDictionary.Web.styles.css",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-kz9ej07h6c.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000110436223"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "9054"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
+        }
+      ]
+    },
+    {
+      "Route": "MyDictionary.Web.styles.css",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\scopedcss\\bundle\\MyDictionary.Web.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "63928"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-EM1SUqG0U0pbGXy8tP2nxHn/IrHoxu0A9X0JJusaKSE="
+        }
+      ]
+    },
+    {
+      "Route": "MyDictionary.Web.styles.css.gz",
+      "AssetFile": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\obj\\Debug\\net9.0\\compressed\\pmdf9zqhye-kz9ej07h6c.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "9054"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 19 Jul 2025 21:35:04 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-YvBZl4VkOKzMNEi/3j7wC8fpKjNKbLBfoswrfpSDkV4="
         }
       ]
     }

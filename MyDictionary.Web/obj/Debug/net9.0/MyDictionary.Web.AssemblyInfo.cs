@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyDictionary.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c503e846ac0110b1c296ab57d45b38238639f73d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+80d6869cd31c5ca41d410333586b3b7c20260b70")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyDictionary.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyDictionary.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

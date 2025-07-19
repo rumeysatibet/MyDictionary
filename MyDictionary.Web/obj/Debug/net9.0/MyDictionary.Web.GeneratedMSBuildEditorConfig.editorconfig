@@ -76,6 +76,10 @@ build_metadata.AdditionalFiles.CssScope = b-rs6hvqt280
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-prdban26ym
 
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Messages.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNZXNzYWdlcy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-oygxfrnfmf
+
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Profile.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-5skjydf936

@@ -53,6 +53,9 @@ builder.AddSqlServerDbContext<DictionaryDbContext>("mydictionarydb");
 // Auth service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Notification service
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
 // Data seeding service
 builder.Services.AddScoped<DataSeedingService>();
 
@@ -66,6 +69,17 @@ app.UseExceptionHandler();
 
 // CORS'u aktif et
 app.UseCors("AllowAll");
+
+// Static files for uploads - wwwroot klasörü için
+app.UseStaticFiles();
+
+// Uploads klasörü için özel static files konfigürasyonu
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads"
+});
 
 // Authentication & Authorization
 app.UseAuthentication();
