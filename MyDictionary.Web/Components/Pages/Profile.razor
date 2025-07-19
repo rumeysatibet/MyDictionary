@@ -1,4 +1,6 @@
+@page "/profile/{username}"
 @page "/profile"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Forms
 @using System.ComponentModel.DataAnnotations
 @using MyDictionary.Web.Services
@@ -6,7 +8,7 @@
 @inject AuthenticationStateService AuthService
 @inject NavigationManager Navigation
 
-<PageTitle>Profilim - MyDictionary</PageTitle>
+<PageTitle>@GetPageTitle() - MyDictionary</PageTitle>
 
 <div class="profile-container">
     <div class="profile-content">
@@ -25,9 +27,12 @@
                                 @GetInitials(currentUser.Username)
                             </div>
                         }
-                        <button class="photo-edit-btn" @onclick="OpenPhotoUpload">
-                            <span class="edit-icon">📷</span>
-                        </button>
+                        @if (IsOwnProfile())
+                        {
+                            <button class="photo-edit-btn" @onclick="OpenPhotoUpload">
+                                <span class="edit-icon">📷</span>
+                            </button>
+                        }
                     </div>
                     
                     @if (showPhotoUpload)
@@ -55,7 +60,20 @@
                 </div>
 
                 <div class="user-details">
-                    <h2 class="username">@currentUser.Username</h2>
+                    <div class="user-header">
+                        <h2 class="username">@currentUser.Username</h2>
+                        @if (!IsOwnProfile() && AuthService.IsAuthenticated)
+                        {
+                            <div class="profile-actions">
+                                <button class="btn btn-follow @(isFollowing ? "following" : "")" @onclick="ToggleFollow">
+                                    @(isFollowing ? "takip ediliyor" : "takip et")
+                                </button>
+                                <button class="btn btn-message" @onclick="SendMessage">
+                                    mesaj gönder
+                                </button>
+                            </div>
+                        }
+                    </div>
                     <p class="join-date">@currentUser.CreatedAt.ToString("MMMM yyyy")'dan beri üye</p>
                     
                     <div class="stats-grid">
@@ -198,7 +216,10 @@
                     {
                         <p class="empty-about">henüz bir tanıtım yazmadınız.</p>
                     }
-                    <button class="btn btn-outline" @onclick="StartEditAbout">düzenle</button>
+                    @if (IsOwnProfile())
+                    {
+                        <button class="btn btn-outline" @onclick="StartEditAbout">düzenle</button>
+                    }
                 </div>
             }
         </div>
@@ -247,6 +268,8 @@
 }
 
 @code {
+    [Parameter] public string username { get; set; } = "";
+    
     private UserProfileModel currentUser = new();
     private List<EntryModel> userEntries = new();
     private List<EntryModel> favoriteEntries = new();
@@ -261,6 +284,7 @@
     private string followModalTitle = "";
     private string aboutText = "";
     private IBrowserFile? selectedPhoto;
+    private bool isFollowing = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -268,6 +292,22 @@
         
         // Önce AuthService'i initialize et
         await AuthService.InitializeAsync();
+        
+        // Eğer username parametresi yoksa, kendi profiline yönlendir
+        if (string.IsNullOrEmpty(username) && AuthService.IsAuthenticated)
+        {
+            username = AuthService.CurrentUser?.Username ?? "";
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Parameter değiştiğinde profili yeniden yükle
+        if (!string.IsNullOrEmpty(username))
+        {
+            await LoadUserProfile();
+            await LoadUserEntries();
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -297,21 +337,41 @@
 
     private async Task LoadUserProfile()
     {
-        if (AuthService.CurrentUser != null)
+        try
         {
-            // Gerçek kullanıcı bilgilerini AuthService'den al
-            currentUser = new UserProfileModel
+            if (IsOwnProfile() && AuthService.CurrentUser != null)
             {
-                Username = AuthService.CurrentUser.Username,
-                CreatedAt = AuthService.CurrentUser.CreatedAt,
-                EntryCount = 42, // Bu API'den gelecek
-                FollowerCount = 18, // Bu API'den gelecek
-                FollowingCount = 25, // Bu API'den gelecek
-                About = "yazılım geliştirme alanında deneyimim var. özellikle .net ve javascript teknolojilerine odaklanıyorum."
-            };
+                // Kendi profilini göster
+                currentUser = new UserProfileModel
+                {
+                    Username = AuthService.CurrentUser.Username,
+                    CreatedAt = AuthService.CurrentUser.CreatedAt,
+                    EntryCount = 42, // Bu API'den gelecek
+                    FollowerCount = 18, // Bu API'den gelecek
+                    FollowingCount = 25, // Bu API'den gelecek
+                    About = "yazılım geliştirme alanında deneyimim var. özellikle .net ve javascript teknolojilerine odaklanıyorum."
+                };
+            }
+            else if (!string.IsNullOrEmpty(username))
+            {
+                // Başka kullanıcının profilini göster (simulated data)
+                currentUser = new UserProfileModel
+                {
+                    Username = username,
+                    CreatedAt = DateTime.Now.AddDays(-200), // Simulated
+                    EntryCount = 76, // Bu API'den gelecek
+                    FollowerCount = 234, // Bu API'den gelecek
+                    FollowingCount = 89, // Bu API'den gelecek
+                    About = $"{username} kullanıcısının profil açıklaması burada yer alıyor."
+                };
+            }
             
             aboutText = currentUser.About ?? "";
             Logger.LogInformation($"👤 Profil yüklendi: {currentUser.Username}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Profil yükleme hatası: {ex.Message}");
         }
     }
 
@@ -444,6 +504,33 @@
     {
         if (string.IsNullOrEmpty(username)) return "?";
         return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    private bool IsOwnProfile()
+    {
+        return AuthService.IsAuthenticated && 
+               AuthService.CurrentUser?.Username?.Equals(username, StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    private string GetPageTitle()
+    {
+        if (string.IsNullOrEmpty(username))
+            return "Profil";
+        
+        return IsOwnProfile() ? "Profilim" : $"{username} - Profil";
+    }
+
+    private async Task ToggleFollow()
+    {
+        isFollowing = !isFollowing;
+        // API çağrısı burada yapılacak
+        Logger.LogInformation($"{username} kullanıcısı {(isFollowing ? "takip edildi" : "takibi bırakıldı")}");
+    }
+
+    private async Task SendMessage()
+    {
+        // Mesaj gönderme işlemi - mesaj sayfasına yönlendirme
+        Navigation.NavigateTo($"/messages/new/{username}");
     }
 
     public class UserProfileModel

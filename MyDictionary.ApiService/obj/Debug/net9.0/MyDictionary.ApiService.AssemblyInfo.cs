@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyDictionary.ApiService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d314725005224b3c0b30a737149a5a4b625a2a5e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c503e846ac0110b1c296ab57d45b38238639f73d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyDictionary.ApiService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyDictionary.ApiService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

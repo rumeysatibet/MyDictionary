@@ -273,5 +273,5 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scoped
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\scopedcss\Components\Pages\UserAgreement.razor.rz.scp.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\jvcbtaqksi-qv3nfca6jb.gz
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\pmdf9zqhye-35qu6uclpg.gz
-C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\y5pozj0ymu-35qu6uclpg.gz
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\pmdf9zqhye-t11ixb9sd6.gz
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\obj\Debug\net9.0\compressed\y5pozj0ymu-t11ixb9sd6.gz

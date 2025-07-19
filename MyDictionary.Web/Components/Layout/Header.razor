@@ -1,8 +1,10 @@
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Web
 @using MyDictionary.Web.Services
 @inject AuthenticationStateService AuthService
 @inject NavigationManager Navigation
 @inject IJSRuntime _jsRuntime
+@inject ILogger<Header> Logger
 @implements IDisposable
 
 <header class="main-header">
@@ -93,19 +95,22 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("🔄 Header OnInitializedAsync başlatıldı");
         // AuthService'i initialize et
         await AuthService.InitializeAsync();
         AuthService.OnAuthenticationChanged += StateHasChanged;
+        Logger.LogInformation($"🔐 Header Initialize - IsAuthenticated: {AuthService.IsAuthenticated}, User: {AuthService.CurrentUser?.Username ?? "null"}");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            Logger.LogInformation("🔄 Header OnAfterRenderAsync (firstRender) başlatıldı");
             // İlk render sonrası localStorage'dan kullanıcı bilgilerini yükle
             await AuthService.LoadFromStorageAsync();
+            Logger.LogInformation($"🔐 Header AfterRender - IsAuthenticated: {AuthService.IsAuthenticated}, User: {AuthService.CurrentUser?.Username ?? "null"}");
             StateHasChanged();
-            
         }
     }
 

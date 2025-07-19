@@ -8,16 +8,16 @@ public class AuthenticationStateService
     private UserInfo? _currentUser;
     private readonly ILogger<AuthenticationStateService> _logger;
     private readonly IJSRuntime _jsRuntime;
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private bool _isInitialized = false;
 
     public event Action? OnAuthenticationChanged;
 
-    public AuthenticationStateService(ILogger<AuthenticationStateService> logger, IJSRuntime jsRuntime, HttpClient httpClient)
+    public AuthenticationStateService(ILogger<AuthenticationStateService> logger, IJSRuntime jsRuntime, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
         _jsRuntime = jsRuntime;
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
     }
 
     public UserInfo? CurrentUser => _currentUser;
@@ -47,22 +47,30 @@ public class AuthenticationStateService
             
             if (!string.IsNullOrEmpty(token))
             {
-                // Token'ı sunucuda validate et
-                var isValid = await ValidateTokenWithServerAsync(token);
-                if (isValid)
+                var userJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
+                if (!string.IsNullOrEmpty(userJson))
                 {
-                    var userJson = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "currentUser");
-                    if (!string.IsNullOrEmpty(userJson))
+                    _currentUser = JsonSerializer.Deserialize<UserInfo>(userJson);
+                    _logger.LogInformation($"🔐 Kullanıcı localStorage'dan yüklendi: {_currentUser?.Username}");
+                    OnAuthenticationChanged?.Invoke();
+                    
+                    // Arka planda token'ı validate et
+                    _ = Task.Run(async () =>
                     {
-                        _currentUser = JsonSerializer.Deserialize<UserInfo>(userJson);
-                        _logger.LogInformation($"🔐 Token geçerli, kullanıcı yüklendi: {_currentUser?.Username}");
-                        OnAuthenticationChanged?.Invoke();
-                    }
-                }
-                else
-                {
-                    _logger.LogInformation("❌ Token geçersiz, localStorage temizleniyor");
-                    await ClearStorageAsync();
+                        try
+                        {
+                            var isValid = await ValidateTokenWithServerAsync(token);
+                            if (!isValid)
+                            {
+                                _logger.LogInformation("❌ Token geçersiz, oturum sonlandırılıyor");
+                                await LogoutAsync();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"❌ Background token validation hatası: {ex.Message}");
+                        }
+                    });
                 }
             }
             else
@@ -92,7 +100,15 @@ public class AuthenticationStateService
         await SaveToStorageAsync(user, token);
         
         _logger.LogInformation("🔔 OnAuthenticationChanged event tetikleniyor");
-        OnAuthenticationChanged?.Invoke();
+        try 
+        {
+            OnAuthenticationChanged?.Invoke();
+            _logger.LogInformation("✅ OnAuthenticationChanged event başarıyla tetiklendi");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"❌ OnAuthenticationChanged event hatası: {ex.Message}");
+        }
     }
 
     public async Task LogoutAsync()
@@ -111,8 +127,9 @@ public class AuthenticationStateService
     {
         try
         {
+            var httpClient = _httpClientFactory.CreateClient("ApiService");
             var request = new { Token = token };
-            var response = await _httpClient.PostAsJsonAsync("api/auth/validate-token", request);
+            var response = await httpClient.PostAsJsonAsync("https://apiservice/api/auth/validate-token", request);
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)

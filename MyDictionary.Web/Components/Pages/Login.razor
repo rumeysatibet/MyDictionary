@@ -224,16 +224,9 @@
                         
                         Logger.LogInformation("🚀 Giriş başarılı, navigation yapılacak...");
                         
-                        // Navigation'ı InvokeAsync ile yap
+                        // Sadece OnAfterRenderAsync ile navigation yap
                         shouldNavigateAfterRender = true;
                         StateHasChanged();
-                        
-                        // Hemen navigation'ı tetikle
-                        _ = InvokeAsync(async () =>
-                        {
-                            await Task.Delay(100); // Render'ın tamamlanması için kısa bekle
-                            await PerformNavigation();
-                        });
                     }
                 }
                 else
