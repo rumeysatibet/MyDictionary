@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyDictionary.ApiService.Data;
 using MyDictionary.ApiService.Services;
+using McpProbe.Blazor.Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +60,9 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 // Data seeding service
 builder.Services.AddScoped<DataSeedingService>();
 
+// Add McpProbe for debugging and monitoring
+builder.Services.AddMcpProbeServer(builder.Configuration);
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -69,6 +73,9 @@ app.UseExceptionHandler();
 
 // CORS'u aktif et
 app.UseCors("AllowAll");
+
+// Use McpProbe middleware for debugging and monitoring
+app.UseMcpProbeServer();
 
 // Static files for uploads - wwwroot klasörü için
 app.UseStaticFiles();
@@ -105,6 +112,11 @@ app.MapGet("/topics", async (DictionaryDbContext db) =>
 
 // Map controllers
 app.MapControllers();
+
+// Map McpProbe SignalR hub for debugging
+app.MapMcpProbeHub();
+
+System.Diagnostics.Debug.WriteLine("[MCP TEST] Test Log");
 
 app.MapDefaultEndpoints();
 

@@ -5,6 +5,7 @@
 @using System.Text
 @inject IHttpClientFactory HttpClientFactory
 @inject ILogger<Contact> Logger
+@implements IDisposable
 
 <PageTitle>İletişim - MyDictionary</PageTitle>
 
@@ -89,10 +90,40 @@
                 {
                     <div class="form-group">
                         <label for="reportedUser">şikayet edilen kullanıcı</label>
-                        <InputText @bind-Value="contactModel.ReportedUser" 
-                                  class="form-control" 
-                                  id="reportedUser" 
-                                  placeholder="kullanıcı adı (isteğe bağlı)" />
+                        <div class="user-search-container">
+                            <input type="text" 
+                                   @bind="userSearchQuery"
+                                   @oninput="HandleUserSearchInput"
+                                   @onkeypress="HandleUserSearchKeyPress"
+                                   class="form-control" 
+                                   id="reportedUser" 
+                                   placeholder="kullanıcı adı ara... (isteğe bağlı)" />
+                            
+                            @if (showUserSearchResults && userSearchResults.Any())
+                            {
+                                <div class="user-search-dropdown">
+                                    @foreach (var user in userSearchResults)
+                                    {
+                                        <div class="user-search-item" @onclick="() => SelectUser(user.Username)">
+                                            <div class="user-avatar-mini">
+                                                @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
+                                                {
+                                                    <img src="/uploads/profiles/@user.ProfilePhotoUrl" alt="@user.Username" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="default-avatar-mini">@GetUserInitials(user.Username)</div>
+                                                }
+                                            </div>
+                                            <div class="user-info-mini">
+                                                <div class="username">@user.Username</div>
+                                                <div class="user-stats">@user.EntryCount entry</div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -158,7 +189,15 @@
         
         <div class="faq-item">
             <h4>hesabımı nasıl silebilirim?</h4>
-            <p>hesap silme işlemi için teknik destek ekibimizle iletişime geçin. support@mydictionary.com adresine e-posta göndererek talebinizi iletebilirsiniz.</p>
+            <p>hesabınızı silmek için <a href="/settings">ayarlar sayfasındaki</a> "tehlikeli bölge" sekmesini kullanabilirsiniz. hesap silme işlemi şunları içerir:</p>
+            <ul>
+                <li>🗂️ tüm topic'leriniz ve entry'leriniz kalıcı olarak silinir</li>
+                <li>💾 favorileriniz ve tüm etkileşimleriniz silinir</li>
+                <li>👥 arkadaşlık bağlantılarınız ve mesajlarınız silinir</li>
+                <li>📧 e-posta adresiniz sistemden kaldırılır</li>
+                <li>🔄 bu işlem geri alınamaz!</li>
+            </ul>
+            <p><strong>not:</strong> işlem güvenlik için şifrenizi gerektirir ve onayınız alınır.</p>
         </div>
 
         <div class="faq-item">
@@ -189,6 +228,12 @@
     private string errorMessage = "";
     private string successMessage = "";
     private bool isSubmitting = false;
+    
+    // User search variables
+    private string userSearchQuery = "";
+    private bool showUserSearchResults = false;
+    private List<UserSearchResult> userSearchResults = new();
+    private System.Threading.Timer? userSearchTimer;
 
     public class ContactModel
     {
@@ -312,6 +357,127 @@
             isSubmitting = false;
             Logger.LogInformation("🏁 İLETİŞİM FORMU İŞLEMİ TAMAMLANDI");
         }
+    }
+
+    // User search methods
+    private async Task HandleUserSearchInput(ChangeEventArgs e)
+    {
+        userSearchQuery = e.Value?.ToString() ?? "";
+        
+        // Timer'ı iptal et
+        userSearchTimer?.Dispose();
+        
+        if (string.IsNullOrWhiteSpace(userSearchQuery) || userSearchQuery.Length < 2)
+        {
+            showUserSearchResults = false;
+            StateHasChanged();
+            return;
+        }
+        
+        // 300ms delay ile arama yap
+        userSearchTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await SearchUsers();
+                StateHasChanged();
+            });
+        }, null, 300, Timeout.Infinite);
+    }
+
+    private async Task HandleUserSearchKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchUsers();
+        }
+        else if (e.Key == "Escape")
+        {
+            showUserSearchResults = false;
+            userSearchQuery = "";
+            StateHasChanged();
+        }
+    }
+
+    private async Task SearchUsers()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(userSearchQuery) || userSearchQuery.Length < 2)
+            {
+                showUserSearchResults = false;
+                return;
+            }
+
+            Logger.LogInformation($"🔍 Contact sayfasında kullanıcı arama: '{userSearchQuery}'");
+            
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var searchUrl = $"https://apiservice/api/user/search?query={Uri.EscapeDataString(userSearchQuery)}&pageSize=5";
+            
+            var response = await httpClient.GetAsync(searchUrl);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("users", out var usersElement))
+                    {
+                        userSearchResults.Clear();
+                        
+                        foreach (var userElement in usersElement.EnumerateArray())
+                        {
+                            var newUser = new UserSearchResult
+                            {
+                                Id = userElement.GetProperty("id").GetInt32(),
+                                Username = userElement.GetProperty("username").GetString() ?? "",
+                                ProfilePhotoUrl = userElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null,
+                                EntryCount = userElement.GetProperty("entryCount").GetInt32()
+                            };
+                            
+                            userSearchResults.Add(newUser);
+                        }
+                        
+                        showUserSearchResults = userSearchResults.Any();
+                        StateHasChanged();
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Contact kullanıcı arama hatası: {ex.Message}");
+        }
+    }
+
+    private void SelectUser(string username)
+    {
+        contactModel.ReportedUser = username;
+        userSearchQuery = username;
+        showUserSearchResults = false;
+        StateHasChanged();
+        Logger.LogInformation($"✅ Kullanıcı seçildi: {username}");
+    }
+
+    private string GetUserInitials(string username)
+    {
+        if (string.IsNullOrEmpty(username)) return "?";
+        return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    public void Dispose()
+    {
+        userSearchTimer?.Dispose();
+    }
+
+    public class UserSearchResult
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+        public int EntryCount { get; set; }
     }
 }
 

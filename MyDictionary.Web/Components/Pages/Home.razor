@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using MyDictionary.Web.Services
 @inject AuthenticationStateService AuthService
+@inject IHttpClientFactory HttpClientFactory
 @inject ILogger<Home> Logger
 
 <PageTitle>MyDictionary</PageTitle>
@@ -19,41 +20,23 @@
     <div class="section">
         <h2 class="section-title">son başlıklar</h2>
         <div class="topics-list">
-            <div class="topic-item">
-                <a href="/topic/yazilim-gelistirme" class="topic-link">yazılım geliştirme</a>
-                <span class="topic-info">
-                    <span class="entry-count">42 entry</span>
-                    <span class="last-update">3 dakika önce</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/react-hooks" class="topic-link">react hooks</a>
-                <span class="topic-info">
-                    <span class="entry-count">18 entry</span>
-                    <span class="last-update">12 dakika önce</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/asp-net-core-mvc" class="topic-link">asp.net core mvc</a>
-                <span class="topic-info">
-                    <span class="entry-count">25 entry</span>
-                    <span class="last-update">1 saat önce</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/veritabani-tasarim" class="topic-link">veritabanı tasarım</a>
-                <span class="topic-info">
-                    <span class="entry-count">33 entry</span>
-                    <span class="last-update">2 saat önce</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/javascript-es6" class="topic-link">javascript es6</a>
-                <span class="topic-info">
-                    <span class="entry-count">67 entry</span>
-                    <span class="last-update">4 saat önce</span>
-                </span>
-            </div>
+            @if (recentTopics != null && recentTopics.Any())
+            {
+                @foreach (var topic in recentTopics)
+                {
+                    <div class="topic-item">
+                        <a href="/topic/@topic.Slug" class="topic-link">@topic.Title</a>
+                        <span class="topic-info">
+                            <span class="entry-count">@topic.EntryCount entry</span>
+                            <span class="last-update">@GetTimeAgo(topic.LastEntryAt ?? topic.CreatedAt)</span>
+                        </span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-content">henüz başlık bulunmuyor</div>
+            }
         </div>
     </div>
 
@@ -61,68 +44,74 @@
     <div class="section">
         <h2 class="section-title">günün başlıkları</h2>
         <div class="topics-list">
-            <div class="topic-item featured">
-                <a href="/topic/remote-calisma" class="topic-link">remote çalışma</a>
-                <span class="topic-info">
-                    <span class="entry-count">156 entry</span>
-                    <span class="last-update">aktif</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/programlama-dilleri" class="topic-link">programlama dilleri</a>
-                <span class="topic-info">
-                    <span class="entry-count">89 entry</span>
-                    <span class="last-update">5 dakika önce</span>
-                </span>
-            </div>
-            <div class="topic-item">
-                <a href="/topic/web-tasarim-trendleri" class="topic-link">web tasarım trendleri</a>
-                <span class="topic-info">
-                    <span class="entry-count">74 entry</span>
-                    <span class="last-update">15 dakika önce</span>
-                </span>
-            </div>
+            @if (popularTopics != null && popularTopics.Any())
+            {
+                @foreach (var topic in popularTopics)
+                {
+                    <div class="topic-item @(topic.EntryCount > 50 ? "featured" : "")">
+                        <a href="/topic/@topic.Slug" class="topic-link">@topic.Title</a>
+                        <span class="topic-info">
+                            <span class="entry-count">@topic.EntryCount entry</span>
+                            <span class="last-update">@GetTimeAgo(topic.LastEntryAt ?? topic.CreatedAt)</span>
+                        </span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-content">henüz başlık bulunmuyor</div>
+            }
         </div>
     </div>
+
 
     <!-- Son Güncellemeler -->
     <div class="section">
         <h2 class="section-title">son güncellemeler</h2>
         <div class="entry-preview">
-            <div class="entry-item">
-                <div class="entry-header">
-                    <a href="/topic/yazilim-gelistirme" class="entry-topic">yazılım geliştirme</a>
-                    <span class="entry-meta">
-                        <a href="/user/developer123" class="entry-author">developer123</a>
-                        <span class="entry-time">5 dakika önce</span>
-                    </span>
-                </div>
-                <div class="entry-content">
-                    yazılım geliştirme sürecinde en önemli şey kod kalitesi ve sürdürülebilirlik. 
-                    clean code prensipleri ve test driven development...
-                </div>
-            </div>
-            <div class="entry-item">
-                <div class="entry-header">
-                    <a href="/topic/react-hooks" class="entry-topic">react hooks</a>
-                    <span class="entry-meta">
-                        <a href="/user/frontend_dev" class="entry-author">frontend_dev</a>
-                        <span class="entry-time">12 dakika önce</span>
-                    </span>
-                </div>
-                <div class="entry-content">
-                    useEffect hook'u ile component lifecycle'ı yönetmek çok daha kolay hale geldi. 
-                    özellikle cleanup fonksiyonları...
-                </div>
-            </div>
+            @if (recentEntries != null && recentEntries.Any())
+            {
+                @foreach (var entry in recentEntries)
+                {
+                    <div class="entry-item">
+                        <div class="entry-header">
+                            <a href="/topic/@entry.Topic.Slug" class="entry-topic">@entry.Topic.Title</a>
+                            <span class="entry-meta">
+                                <a href="/user/@entry.CreatedBy" class="entry-author">@entry.CreatedBy</a>
+                                <span class="entry-time">@GetTimeAgo(entry.CreatedAt)</span>
+                            </span>
+                        </div>
+                        <div class="entry-content">
+                            @if (!string.IsNullOrEmpty(entry.ContentHtml))
+                            {
+                                <MyDictionary.Web.Components.Shared.EntryContent ContentHtml="@GetPreviewHtml(entry.ContentHtml)" />
+                            }
+                            else
+                            {
+                                <MyDictionary.Web.Components.Shared.EntryContent Content="@GetPreviewText(entry.Content)" />
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-content">henüz entry bulunmuyor</div>
+            }
         </div>
     </div>
 </div>
 
 @code {
+    private List<TopicDto>? recentTopics;
+    private List<TopicDto>? popularTopics;
+    private List<EntryDto>? recentEntries;
+    
+
     protected override async Task OnInitializedAsync()
     {
         await AuthService.InitializeAsync();
+        await LoadDataAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -133,5 +122,127 @@
             Logger.LogInformation($"🏠 Ana sayfa - IsAuthenticated: {AuthService.IsAuthenticated}");
             Logger.LogInformation($"🏠 Ana sayfa - CurrentUser: {AuthService.CurrentUser?.Username ?? "null"}");
         }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // Son başlıkları yükle (en son entry'si olan)
+            var recentResponse = await httpClient.GetFromJsonAsync<List<TopicDto>>("https://apiservice/api/topics?pageSize=5");
+            recentTopics = recentResponse ?? new List<TopicDto>();
+
+            // Popüler başlıkları yükle (en çok entry'si olan)
+            var popularResponse = await httpClient.GetFromJsonAsync<List<TopicDto>>("https://apiservice/api/topics?pageSize=3");
+            popularTopics = popularResponse?.OrderByDescending(t => t.EntryCount).Take(3).ToList() ?? new List<TopicDto>();
+
+            // Son entry'leri yükle
+            var entriesResponse = await httpClient.GetFromJsonAsync<List<EntryDto>>("https://apiservice/api/entries?pageSize=2");
+            recentEntries = entriesResponse ?? new List<EntryDto>();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Ana sayfa verileri yüklenirken hata oluştu");
+            recentTopics = new List<TopicDto>();
+            popularTopics = new List<TopicDto>();
+            recentEntries = new List<EntryDto>();
+        }
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+        
+        if (timeSpan.TotalMinutes < 1)
+            return "şimdi";
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes} dakika önce";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours} saat önce";
+        if (timeSpan.TotalDays < 7)
+            return $"{(int)timeSpan.TotalDays} gün önce";
+        
+        return dateTime.ToString("dd.MM.yyyy");
+    }
+
+    private string GetPreviewText(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return "";
+        
+        var preview = content.Length > 120 ? content.Substring(0, 120) + "..." : content;
+        return preview;
+    }
+
+    private string? GetPreviewHtml(string? contentHtml)
+    {
+        if (string.IsNullOrWhiteSpace(contentHtml))
+            return null;
+        
+        // HTML içeriği varsa, sadece entry-link'leri koru, geri kalanını düz metne çevir
+        // Önce entry-link span'lerini koru
+        var linkPattern = @"<span class=""entry-link"" data-url=""([^""]+)"">\(bakınız\)</span>";
+        var links = new List<string>();
+        var preserved = System.Text.RegularExpressions.Regex.Replace(contentHtml, linkPattern, match =>
+        {
+            links.Add(match.Value);
+            return $"LINK_PLACEHOLDER_{links.Count - 1}";
+        });
+        
+        // HTML tag'lerini temizle (linkler dışında)
+        var plainText = System.Text.RegularExpressions.Regex.Replace(preserved, @"<[^>]+>", "");
+        
+        // Text'i kısalt
+        if (plainText.Length > 120)
+        {
+            plainText = plainText.Substring(0, 120) + "...";
+        }
+        
+        // Link placeholder'larını geri koy
+        for (int i = 0; i < links.Count; i++)
+        {
+            plainText = plainText.Replace($"LINK_PLACEHOLDER_{i}", links[i]);
+        }
+        
+        return plainText;
+    }
+
+    // DTO sınıfları
+    public class TopicDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
+        public CategoryDto Category { get; set; } = new();
+        public string CreatedBy { get; set; } = string.Empty;
+        public int EntryCount { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastEntryAt { get; set; }
+    }
+
+    public class CategoryDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+    }
+
+    public class EntryDto
+    {
+        public int Id { get; set; }
+        public string Content { get; set; } = string.Empty;
+        public string? ContentHtml { get; set; }
+        public TopicSummaryDto Topic { get; set; } = new();
+        public string CreatedBy { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public int FavoriteCount { get; set; }
+    }
+
+    public class TopicSummaryDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
     }
 }

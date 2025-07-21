@@ -28,4 +28,13 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="McpProbe.Blazor.Server">
+      <HintPath>..\mcp-probe\McpProbe\Src\McpProbe.Blazor.Server\bin\Debug\net9.0\McpProbe.Blazor.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="McpProbe.Core">
+      <HintPath>..\mcp-probe\McpProbe\Src\McpProbe.Blazor.Server\bin\Debug\net9.0\McpProbe.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

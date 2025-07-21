@@ -141,6 +141,117 @@
     color: #333;
 }
 
+.no-content[b-rs6hvqt280] {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Yeni bölümler için CSS */
+.popular-topics[b-rs6hvqt280] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.popular-topic-item[b-rs6hvqt280] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.popular-topic-link[b-rs6hvqt280] {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.popular-topic-link:hover[b-rs6hvqt280] {
+    text-decoration: underline;
+}
+
+.popular-topic-count[b-rs6hvqt280] {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.categories-grid[b-rs6hvqt280] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.category-item[b-rs6hvqt280] {
+    padding: 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.category-item:hover[b-rs6hvqt280] {
+    background: #e9ecef;
+}
+
+.category-link[b-rs6hvqt280] {
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.category-link:hover[b-rs6hvqt280] {
+    text-decoration: underline;
+}
+
+.category-count[b-rs6hvqt280] {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.random-topics[b-rs6hvqt280] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.random-topic-item[b-rs6hvqt280] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.random-topic-link[b-rs6hvqt280] {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.random-topic-link:hover[b-rs6hvqt280] {
+    text-decoration: underline;
+}
+
+.create-topic-hint[b-rs6hvqt280] {
+    font-size: 12px;
+}
+
+.create-link[b-rs6hvqt280] {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.create-link:hover[b-rs6hvqt280] {
+    text-decoration: underline;
+}
+
+.random-entry-count[b-rs6hvqt280] {
+    color: #6c757d;
+    font-size: 14px;
+}
+
 @media (max-width: 768px) {
     .home-container[b-rs6hvqt280] {
         padding: 0 10px;
@@ -156,5 +267,15 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
+    }
+
+    .categories-grid[b-rs6hvqt280] {
+        grid-template-columns: 1fr;
+    }
+
+    .popular-topics[b-rs6hvqt280],
+    .random-topics[b-rs6hvqt280] {
+        flex-direction: column;
+        gap: 8px;
     }
 }

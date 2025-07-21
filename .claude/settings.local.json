@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__mcpprobe__read_logs",
+      "Bash(dotnet build)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "mcpprobe"
+  ]
+}

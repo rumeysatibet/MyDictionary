@@ -1,0 +1,404 @@
+.topic-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #53925F;
+}
+
+.topic-info {
+    flex: 1;
+}
+
+.topic-title-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.topic-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.topic-category {
+    background-color: #53925F;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.topic-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.topic-stat {
+    font-weight: 500;
+}
+
+.topic-author {
+    font-style: italic;
+}
+
+.topic-actions {
+    flex-shrink: 0;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #53925F;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4a7f55;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.new-entry-form {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close:hover {
+    color: #333;
+}
+
+.entry-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.entry-textarea:focus {
+    outline: none;
+    border-color: #53925F;
+    box-shadow: 0 0 0 2px rgba(83, 146, 95, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.entries-section {
+    margin-top: 30px;
+}
+
+.entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entry-card {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.3s ease;
+}
+
+.entry-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.entry-author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.entry-author {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.entry-author:hover {
+    text-decoration: underline;
+}
+
+.entry-date {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.entry-edited {
+    color: #6c757d;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.entry-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-favorite {
+    background: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.btn-favorite:hover {
+    border-color: #53925F;
+    color: #53925F;
+}
+
+.btn-favorite.favorited {
+    background-color: #53925F;
+    border-color: #53925F;
+    color: white;
+}
+
+.favorite-icon {
+    font-size: 14px;
+}
+
+.favorite-count {
+    font-size: 11px;
+}
+
+.btn-delete {
+    background: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.entry-content {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.entry-content ::deep .entry-link {
+    color: #53925F;
+    cursor: pointer;
+    text-decoration: underline;
+    font-style: italic;
+}
+
+.entry-content ::deep .entry-link:hover {
+    color: #4a7f55;
+}
+
+.no-entries {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.no-entries p {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.no-entries a {
+    color: #53925F;
+    text-decoration: none;
+}
+
+.no-entries a:hover {
+    text-decoration: underline;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+.not-found {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.not-found h1 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.not-found p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.not-found-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.create-topic-hint {
+    font-size: 14px;
+    margin: 0;
+}
+
+.create-topic-hint a {
+    color: #53925F;
+    text-decoration: none;
+}
+
+.create-topic-hint a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .topic-container {
+        padding: 10px;
+    }
+
+    .topic-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .topic-title-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .topic-title {
+        font-size: 24px;
+    }
+
+    .topic-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .entry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .entry-author-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .new-entry-form {
+        padding: 15px;
+    }
+
+    .entry-card {
+        padding: 15px;
+    }
+}

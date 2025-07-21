@@ -141,6 +141,117 @@
     color: #333;
 }
 
+.no-content {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Yeni bölümler için CSS */
+.popular-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.popular-topic-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.popular-topic-link {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.popular-topic-link:hover {
+    text-decoration: underline;
+}
+
+.popular-topic-count {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.category-item {
+    padding: 15px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.category-item:hover {
+    background: #e9ecef;
+}
+
+.category-link {
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.category-link:hover {
+    text-decoration: underline;
+}
+
+.category-count {
+    display: block;
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.random-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.random-topic-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.random-topic-link {
+    color: #53925F;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.random-topic-link:hover {
+    text-decoration: underline;
+}
+
+.create-topic-hint {
+    font-size: 12px;
+}
+
+.create-link {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.create-link:hover {
+    text-decoration: underline;
+}
+
+.random-entry-count {
+    color: #6c757d;
+    font-size: 14px;
+}
+
 @media (max-width: 768px) {
     .home-container {
         padding: 0 10px;
@@ -156,5 +267,15 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
+    }
+
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .popular-topics,
+    .random-topics {
+        flex-direction: column;
+        gap: 8px;
     }
 }

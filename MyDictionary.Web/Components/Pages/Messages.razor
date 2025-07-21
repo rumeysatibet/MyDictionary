@@ -31,7 +31,7 @@
                             <div class="conversation-avatar">
                                 @if (!string.IsNullOrEmpty(conversation.OtherUser.ProfilePhotoUrl))
                                 {
-                                    <img src="https://apiservice/uploads/profiles/@conversation.OtherUser.ProfilePhotoUrl" alt="@conversation.OtherUser.Username" />
+                                    <img src="/uploads/profiles/@conversation.OtherUser.ProfilePhotoUrl" alt="@conversation.OtherUser.Username" />
                                 }
                                 else
                                 {
@@ -82,7 +82,7 @@
                         <div class="chat-avatar">
                             @if (!string.IsNullOrEmpty(selectedConversation.OtherUser.ProfilePhotoUrl))
                             {
-                                <img src="https://apiservice/uploads/profiles/@selectedConversation.OtherUser.ProfilePhotoUrl" alt="@selectedConversation.OtherUser.Username" />
+                                <img src="/uploads/profiles/@selectedConversation.OtherUser.ProfilePhotoUrl" alt="@selectedConversation.OtherUser.Username" />
                             }
                             else
                             {
@@ -110,7 +110,7 @@
                                     <div class="message-avatar">
                                         @if (!string.IsNullOrEmpty(message.Sender.ProfilePhotoUrl))
                                         {
-                                            <img src="https://apiservice/uploads/profiles/@message.Sender.ProfilePhotoUrl" alt="@message.Sender.Username" />
+                                            <img src="/uploads/profiles/@message.Sender.ProfilePhotoUrl" alt="@message.Sender.Username" />
                                         }
                                         else
                                         {
@@ -148,7 +148,9 @@
                 <div class="chat-input-container">
                     <div class="chat-input">
                         <textarea @bind="newMessage" 
+                                  @bind:event="oninput"
                                   @onkeydown="HandleKeyDown"
+                                  @onkeydown:preventDefault="false"
                                   placeholder="Mesajınızı yazın..." 
                                   rows="1" 
                                   maxlength="1000"></textarea>
@@ -193,14 +195,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Logger.LogInformation("💬 Messages sayfası yükleniyor...");
-        
-        await AuthService.InitializeAsync();
-        
-        if (!AuthService.IsAuthenticated)
+        try
         {
-            Navigation.NavigateTo("/login");
-            return;
+            Logger.LogInformation("💬 Messages OnInitializedAsync başlatıldı");
+            
+            // AuthService'i initialize et
+            await AuthService.InitializeAsync();
+            
+            // Auth durumunu kontrol et
+            if (!AuthService.IsAuthenticated)
+            {
+                Logger.LogWarning("❌ Messages: Kullanıcı giriş yapmamış");
+                return; // Navigation'ı OnAfterRenderAsync'e bırak
+            }
+            
+            Logger.LogInformation("✅ Messages: Kullanıcı doğrulandı");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Messages OnInitializedAsync hatası: {ex.Message}");
         }
     }
 
@@ -208,29 +221,58 @@
     {
         if (firstRender)
         {
-            await AuthService.LoadFromStorageAsync();
-            
-            if (!AuthService.IsAuthenticated)
+            try
             {
-                Navigation.NavigateTo("/login");
-                return;
-            }
-
-            await LoadConversations();
-            
-            // URL'de username varsa o konuşmayı seç
-            if (!string.IsNullOrEmpty(Username))
-            {
-                var conversation = conversations.FirstOrDefault(c => 
-                    c.OtherUser.Username.Equals(Username, StringComparison.OrdinalIgnoreCase));
-                if (conversation != null)
+                Logger.LogInformation("💬 Messages OnAfterRenderAsync başlatılıyor");
+                
+                // AuthService'i yükle
+                await AuthService.LoadFromStorageAsync();
+                
+                if (!AuthService.IsAuthenticated)
                 {
-                    await SelectConversation(conversation);
+                    Logger.LogWarning("❌ Kullanıcı giriş yapmamış, login sayfasına yönlendiriliyor");
+                    try
+                    {
+                        Navigation.NavigateTo("/login", forceLoad: true);
+                    }
+                    catch (Exception navEx)
+                    {
+                        Logger.LogError($"❌ Login navigation hatası: {navEx.Message}");
+                    }
+                    return;
                 }
+
+                Logger.LogInformation("✅ Kullanıcı doğrulandı, mesajlar yükleniyor");
+                await LoadConversations();
+
+                // URL'de username varsa o konuşmayı seç
+                if (!string.IsNullOrEmpty(Username))
+                {
+                    var conversation = conversations.FirstOrDefault(c =>
+                        c.OtherUser.Username.Equals(Username, StringComparison.OrdinalIgnoreCase));
+                    if (conversation != null)
+                    {
+                        selectedConversation = conversation;
+                        await LoadMessages(conversation.OtherUser.Id);
+                        Logger.LogInformation($"✅ Konuşma seçildi: {Username}");
+                    }
+                    else
+                    {
+                        Logger.LogWarning($"⚠️ {Username} ile konuşma bulunamadı");
+                        // Yeni konuşma için kullanıcı bilgilerini yükle
+                        await LoadUserForNewConversation(Username);
+                    }
+                }
+
+                StartRefreshTimer();
+                StateHasChanged();
+                Logger.LogInformation("✅ Messages sayfası başarıyla yüklendi");
             }
-            
-            StartRefreshTimer();
-            StateHasChanged();
+            catch (Exception ex)
+            {
+                Logger.LogError($"❌ Messages OnAfterRenderAsync hatası: {ex.Message}");
+                Logger.LogError($"❌ Stack trace: {ex.StackTrace}");
+            }
         }
     }
 
@@ -299,20 +341,57 @@
         }
     }
 
+    private async Task LoadUserForNewConversation(string username)
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync($"https://apiservice/api/profile/{username}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("user", out var userElement))
+                    {
+                        // Yeni konuşma için geçici bir ConversationModel oluştur
+                        selectedConversation = new ConversationModel
+                        {
+                            Id = 0, // Henüz oluşturulmamış konuşma
+                            LastMessageAt = DateTime.UtcNow,
+                            UnreadCount = 0,
+                            OtherUser = new UserModel
+                            {
+                                Id = userElement.GetProperty("id").GetInt32(),
+                                Username = userElement.GetProperty("username").GetString() ?? "",
+                                ProfilePhotoUrl = userElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null
+                            }
+                        };
+
+                        Logger.LogInformation($"✅ Yeni konuşma için kullanıcı yüklendi: {username}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Kullanıcı bilgileri yükleme hatası: {ex.Message}");
+        }
+    }
+
     private async Task SelectConversation(ConversationModel conversation)
     {
         selectedConversation = conversation;
         await LoadMessages(conversation.OtherUser.Id);
-        
-        // URL'yi güncelle - NavigationException'ı önlemek için try-catch ile wrap edildi
-        try
-        {
-            Navigation.NavigateTo($"/messages/{conversation.OtherUser.Username}", false);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogWarning($"⚠️ Navigation güncelleme hatası (göz ardı edildi): {ex.Message}");
-        }
+        StateHasChanged();
     }
 
     private async Task LoadMessages(int otherUserId)
@@ -396,8 +475,22 @@
             if (response.IsSuccessStatusCode)
             {
                 newMessage = "";
+                
+                // Yeni konuşma oluşturulduysa, konuşma listesini yeniden yükle
+                await LoadConversations();
+                
+                // Eğer bu yeni bir konuşmaysa, gerçek konuşmayı seç
+                if (selectedConversation.Id == 0)
+                {
+                    var newConversation = conversations.FirstOrDefault(c =>
+                        c.OtherUser.Id == selectedConversation.OtherUser.Id);
+                    if (newConversation != null)
+                    {
+                        selectedConversation = newConversation;
+                    }
+                }
+                
                 await LoadMessages(selectedConversation.OtherUser.Id);
-                await LoadConversations(); // Konuşma listesini de güncelle
             }
         }
         catch (Exception ex)
@@ -412,7 +505,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter" && !e.ShiftKey)
+        if (e.Key == "Enter" && !e.ShiftKey && !string.IsNullOrWhiteSpace(newMessage) && !isSending)
         {
             await SendMessage();
         }

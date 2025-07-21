@@ -1,0 +1,547 @@
+@page "/search"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using MyDictionary.Web.Services
+@inject AuthenticationStateService AuthService
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Search> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>Arama - MyDictionary</PageTitle>
+
+<div class="search-page">
+    <div class="page-header">
+        <h1>gelişmiş arama</h1>
+        <p>kullanıcılar, topic'ler ve entry'ler arasında kapsamlı arama yapın</p>
+    </div>
+
+    <div class="search-content">
+        <!-- Arama Formu -->
+        <div class="search-form">
+            <div class="search-input-section">
+                <input type="text" 
+                       class="main-search-input" 
+                       placeholder="ne arıyorsun?"
+                       @bind="searchQuery"
+                       @onkeypress="HandleKeyPress" />
+                <button class="main-search-button" @onclick="PerformSearch" disabled="@isSearching">
+                    @if (isSearching)
+                    {
+                        <span>🔄</span>
+                    }
+                    else
+                    {
+                        <span>🔍</span>
+                    }
+                    ara
+                </button>
+            </div>
+
+            <div class="search-filters">
+                <div class="filter-group">
+                    <label>arama türü:</label>
+                    <select @bind="searchType" class="filter-select">
+                        <option value="all">hepsi</option>
+                        <option value="users">kullanıcılar</option>
+                        <option value="topics">topic'ler</option>
+                        <option value="entries">entry'ler</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>kategori:</label>
+                    <select @bind="selectedCategoryId" class="filter-select">
+                        <option value="0">tüm kategoriler</option>
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>sıralama:</label>
+                    <select @bind="sortBy" class="filter-select">
+                        <option value="relevance">ilgililik</option>
+                        <option value="date">tarih</option>
+                        <option value="popular">popülerlik</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arama Sonuçları -->
+        @if (hasSearched)
+        {
+            <div class="search-results">
+                @if (isSearching)
+                {
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>aranıyor...</p>
+                    </div>
+                }
+                else if (searchResults.Any())
+                {
+                    <div class="results-header">
+                        <h3>"@searchQuery" için @totalResults sonuç bulundu</h3>
+                    </div>
+
+                    <div class="results-tabs">
+                        <button class="tab @(activeTab == "all" ? "active" : "")" @onclick="@(() => SetActiveTab("all"))">
+                            tümü (@totalResults)
+                        </button>
+                        <button class="tab @(activeTab == "users" ? "active" : "")" @onclick="@(() => SetActiveTab("users"))">
+                            kullanıcılar (@userResults.Count)
+                        </button>
+                        <button class="tab @(activeTab == "topics" ? "active" : "")" @onclick="@(() => SetActiveTab("topics"))">
+                            topic'ler (@topicResults.Count)
+                        </button>
+                        <button class="tab @(activeTab == "entries" ? "active" : "")" @onclick="@(() => SetActiveTab("entries"))">
+                            entry'ler (@entryResults.Count)
+                        </button>
+                    </div>
+
+                    <div class="results-content">
+                        @if (activeTab == "all" || activeTab == "users")
+                        {
+                            @foreach (var user in GetVisibleUsers())
+                            {
+                                <div class="result-item user-result" @onclick="() => NavigateToProfile(user.Username)">
+                                    <div class="user-avatar">
+                                        @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
+                                        {
+                                            <img src="/uploads/profiles/@user.ProfilePhotoUrl" alt="@user.Username" />
+                                        }
+                                        else
+                                        {
+                                            <div class="default-avatar">@GetUserInitials(user.Username)</div>
+                                        }
+                                    </div>
+                                    <div class="user-info">
+                                        <h4>@user.Username</h4>
+                                        <p>@user.EntryCount entry • @user.FollowerCount takipçi</p>
+                                        @if (!string.IsNullOrEmpty(user.About))
+                                        {
+                                            <p class="user-about">@user.About</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        @if (activeTab == "all" || activeTab == "topics")
+                        {
+                            @foreach (var topic in GetVisibleTopics())
+                            {
+                                <div class="result-item topic-result" @onclick="() => NavigateToTopic(topic.Slug)">
+                                    <div class="topic-info">
+                                        <h4>@topic.Title</h4>
+                                        <div class="topic-meta">
+                                            <span class="category" style="background-color: @topic.CategoryColor">@topic.CategoryName</span>
+                                            <span>@topic.EntryCount entry</span>
+                                            <span>@topic.ViewCount görüntülenme</span>
+                                            <span>@GetTimeAgo(topic.CreatedAt)</span>
+                                        </div>
+                                        <p class="topic-author">@topic.CreatedBy tarafından</p>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        @if (activeTab == "all" || activeTab == "entries")
+                        {
+                            @foreach (var entry in GetVisibleEntries())
+                            {
+                                <div class="result-item entry-result" @onclick="() => NavigateToTopic(entry.TopicSlug)">
+                                    <div class="entry-info">
+                                        <h4>@entry.TopicTitle</h4>
+                                        <div class="entry-content">
+                                            <MyDictionary.Web.Components.Shared.EntryContent Content="@GetPreviewText(entry.Content)" ContentHtml="@GetPreviewHtml(entry.ContentHtml)" />
+                                        </div>
+                                        <div class="entry-meta">
+                                            <span>@entry.CreatedBy</span>
+                                            <span>@GetTimeAgo(entry.CreatedAt)</span>
+                                            <span>@entry.FavoriteCount beğeni</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    @if (hasMoreResults)
+                    {
+                        <div class="load-more">
+                            <button class="btn-secondary" @onclick="LoadMoreResults" disabled="@isLoadingMore">
+                                @if (isLoadingMore)
+                                {
+                                    <span>yükleniyor...</span>
+                                }
+                                else
+                                {
+                                    <span>daha fazla yükle</span>
+                                }
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-results">
+                        <div class="no-results-content">
+                            <span class="no-results-icon">🔍</span>
+                            <h3>"@searchQuery" için sonuç bulunamadı</h3>
+                            <p>farklı kelimeler deneyebilir veya filtreleri değiştirebilirsiniz</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="search-suggestions">
+                <h3>popüler aramalar</h3>
+                <div class="suggestion-tags">
+                    <button class="suggestion-tag" @onclick="@(() => SearchSuggestion("web geliştirme"))">web geliştirme</button>
+                    <button class="suggestion-tag" @onclick="@(() => SearchSuggestion("python"))">python</button>
+                    <button class="suggestion-tag" @onclick="@(() => SearchSuggestion("javascript"))">javascript</button>
+                    <button class="suggestion-tag" @onclick="@(() => SearchSuggestion("react"))">react</button>
+                    <button class="suggestion-tag" @onclick="@(() => SearchSuggestion("database"))">database</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, SupplyParameterFromQuery] public string? q { get; set; }
+
+    private string searchQuery = "";
+    private string searchType = "all";
+    private int selectedCategoryId = 0;
+    private string sortBy = "relevance";
+    private string activeTab = "all";
+    
+    private bool isSearching = false;
+    private bool isLoadingMore = false;
+    private bool hasSearched = false;
+    private bool hasMoreResults = false;
+    private int currentPage = 1;
+    private int totalResults = 0;
+
+    private List<CategoryDto> categories = new();
+    private List<SearchResult> searchResults = new();
+    private List<UserResult> userResults = new();
+    private List<TopicResult> topicResults = new();
+    private List<EntryResult> entryResults = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.InitializeAsync();
+        await LoadCategories();
+        
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            searchQuery = q;
+            await PerformSearch();
+        }
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await PerformSearch();
+        }
+    }
+
+    private async Task PerformSearch()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery) || isSearching)
+            return;
+
+        isSearching = true;
+        hasSearched = true;
+        currentPage = 1;
+        
+        ClearResults();
+
+        try
+        {
+            if (searchType == "all" || searchType == "users")
+            {
+                await SearchUsers();
+            }
+            if (searchType == "all" || searchType == "topics")
+            {
+                await SearchTopics();
+            }
+            if (searchType == "all" || searchType == "entries")
+            {
+                await SearchEntries();
+            }
+
+            totalResults = userResults.Count + topicResults.Count + entryResults.Count;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Arama hatası");
+        }
+        finally
+        {
+            isSearching = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SearchUsers()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var url = $"https://apiservice/api/user/search?query={Uri.EscapeDataString(searchQuery)}&pageSize=20";
+            
+            var response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                if (apiResponse.TryGetProperty("success", out var success) && success.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("users", out var users))
+                    {
+                        foreach (var user in users.EnumerateArray())
+                        {
+                            userResults.Add(new UserResult
+                            {
+                                Id = user.GetProperty("id").GetInt32(),
+                                Username = user.GetProperty("username").GetString() ?? "",
+                                ProfilePhotoUrl = user.TryGetProperty("profilePhotoUrl", out var photo) ? photo.GetString() : null,
+                                About = user.TryGetProperty("about", out var about) ? about.GetString() : null,
+                                EntryCount = user.GetProperty("entryCount").GetInt32(),
+                                FollowerCount = user.GetProperty("followerCount").GetInt32()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Kullanıcı arama hatası");
+        }
+    }
+
+    private async Task SearchTopics()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var url = $"https://apiservice/api/topics?search={Uri.EscapeDataString(searchQuery)}&pageSize=20";
+            if (selectedCategoryId > 0)
+            {
+                url += $"&categoryId={selectedCategoryId}";
+            }
+            
+            var response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var topics = await response.Content.ReadFromJsonAsync<List<TopicResult>>();
+                if (topics != null)
+                {
+                    topicResults.AddRange(topics);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Topic arama hatası");
+        }
+    }
+
+    private async Task SearchEntries()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var url = $"https://apiservice/api/entries?search={Uri.EscapeDataString(searchQuery)}&pageSize=20";
+            if (selectedCategoryId > 0)
+            {
+                url += $"&categoryId={selectedCategoryId}";
+            }
+            
+            var response = await httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var entries = await response.Content.ReadFromJsonAsync<List<EntryResult>>();
+                if (entries != null)
+                {
+                    entryResults.AddRange(entries);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Entry arama hatası");
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetAsync("https://apiservice/api/categories");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var categoriesData = await response.Content.ReadFromJsonAsync<List<CategoryDto>>();
+                if (categoriesData != null)
+                {
+                    categories = categoriesData;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Kategoriler yükleme hatası");
+        }
+    }
+
+    private void ClearResults()
+    {
+        userResults.Clear();
+        topicResults.Clear();
+        entryResults.Clear();
+        searchResults.Clear();
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private void SearchSuggestion(string suggestion)
+    {
+        searchQuery = suggestion;
+        Task.Run(PerformSearch);
+    }
+
+    private async Task LoadMoreResults()
+    {
+        // Implement pagination
+        currentPage++;
+        await PerformSearch();
+    }
+
+    private IEnumerable<UserResult> GetVisibleUsers()
+    {
+        return activeTab == "all" ? userResults.Take(3) : userResults;
+    }
+
+    private IEnumerable<TopicResult> GetVisibleTopics()
+    {
+        return activeTab == "all" ? topicResults.Take(3) : topicResults;
+    }
+
+    private IEnumerable<EntryResult> GetVisibleEntries()
+    {
+        return activeTab == "all" ? entryResults.Take(3) : entryResults;
+    }
+
+    private void NavigateToProfile(string username)
+    {
+        Navigation.NavigateTo($"/profile/{username}");
+    }
+
+    private void NavigateToTopic(string slug)
+    {
+        Navigation.NavigateTo($"/topic/{slug}");
+    }
+
+    private string GetUserInitials(string username)
+    {
+        if (string.IsNullOrEmpty(username)) return "?";
+        return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+        
+        if (timeSpan.TotalMinutes < 1) return "az önce";
+        if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes}dk önce";
+        if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours}sa önce";
+        if (timeSpan.TotalDays < 7) return $"{(int)timeSpan.TotalDays}gün önce";
+        
+        return dateTime.ToString("dd MMM yyyy");
+    }
+
+    private string GetPreviewText(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return "";
+        
+        return content.Length > 150 ? content.Substring(0, 150) + "..." : content;
+    }
+
+    private string? GetPreviewHtml(string? contentHtml)
+    {
+        if (string.IsNullOrWhiteSpace(contentHtml))
+            return null;
+        
+        return contentHtml.Length > 200 ? contentHtml.Substring(0, 200) + "..." : contentHtml;
+    }
+
+    // DTO Classes
+    public class CategoryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Slug { get; set; } = "";
+        public string Color { get; set; } = "";
+    }
+
+    public class SearchResult
+    {
+        public string Type { get; set; } = "";
+        public object Data { get; set; } = null!;
+    }
+
+    public class UserResult
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+        public string? About { get; set; }
+        public int EntryCount { get; set; }
+        public int FollowerCount { get; set; }
+    }
+
+    public class TopicResult
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Slug { get; set; } = "";
+        public string CategoryName { get; set; } = "";
+        public string CategoryColor { get; set; } = "";
+        public string CreatedBy { get; set; } = "";
+        public int EntryCount { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class EntryResult
+    {
+        public int Id { get; set; }
+        public string Content { get; set; } = "";
+        public string? ContentHtml { get; set; }
+        public string TopicTitle { get; set; } = "";
+        public string TopicSlug { get; set; } = "";
+        public string CreatedBy { get; set; } = "";
+        public int FavoriteCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+}

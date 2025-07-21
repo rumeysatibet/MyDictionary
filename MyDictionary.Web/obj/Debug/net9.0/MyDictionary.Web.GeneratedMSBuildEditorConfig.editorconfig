@@ -36,8 +36,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Notifications.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RpZmljYXRpb25zLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Search.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZWFyY2gucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Shared/EntryContent.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRW50cnlDb250ZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Shared/EntryLink.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRcRW50cnlMaW5rLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/_Imports.razor]
@@ -64,6 +80,10 @@ build_metadata.AdditionalFiles.CssScope = b-djr6r0dldz
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcU2lkZWJhci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-uwidg2iz6f
 
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Category.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXRlZ29yeS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-9dd2ceo481
+
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Contact.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb250YWN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-pkkjsnyd4w
@@ -80,6 +100,10 @@ build_metadata.AdditionalFiles.CssScope = b-prdban26ym
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNZXNzYWdlcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-oygxfrnfmf
 
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/NewTopic.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOZXdUb3BpYy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-6fdpuiy0nr
+
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Profile.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-5skjydf936
@@ -91,6 +115,14 @@ build_metadata.AdditionalFiles.CssScope = b-5zpamo1t4z
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Rules.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSdWxlcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-jaaxnq5b4v
+
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Settings.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZXR0aW5ncy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-ttmzcp31th
+
+[C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/Topic.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUb3BpYy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-9cf86x5sad
 
 [C:/DEV/Github/MyDictionary/MyDictionary/MyDictionary.Web/Components/Pages/UserAgreement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc2VyQWdyZWVtZW50LnJhem9y

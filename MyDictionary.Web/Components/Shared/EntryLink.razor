@@ -1,0 +1,31 @@
+@inject IJSRuntime JSRuntime
+
+<span class="entry-link" @onclick="OpenLink" @onclick:preventDefault="true" title="@Url">
+    (bakınız)
+</span>
+
+@code {
+    [Parameter] public string Url { get; set; } = string.Empty;
+
+    private async Task OpenLink()
+    {
+        if (!string.IsNullOrEmpty(Url))
+        {
+            await JSRuntime.InvokeVoidAsync("window.open", Url, "_blank");
+        }
+    }
+}
+
+<style>
+    .entry-link {
+        color: #007bff;
+        cursor: pointer;
+        text-decoration: underline;
+        font-style: italic;
+    }
+
+    .entry-link:hover {
+        color: #0056b3;
+        text-decoration: none;
+    }
+</style>

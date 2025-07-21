@@ -10,8 +10,11 @@ public class DictionaryDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<Topic> Topics { get; set; }
     public DbSet<Entry> Entries { get; set; }
+    public DbSet<EntryFavorite> EntryFavorites { get; set; }
+    public DbSet<EntryLink> EntryLinks { get; set; }
     public DbSet<UserAgreement> UserAgreements { get; set; }
     public DbSet<UserAgreementAcceptance> UserAgreementAcceptances { get; set; }
     public DbSet<FriendRequest> FriendRequests { get; set; }
@@ -19,31 +22,12 @@ public class DictionaryDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<UserBlock> UserBlocks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configure the relationship between Entry and User
-        modelBuilder.Entity<Entry>()
-            .HasOne(e => e.CreatedByUser)
-            .WithMany()
-            .HasForeignKey(e => e.CreatedByUserId)
-            .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
-
-        // Configure the relationship between Entry and Topic
-        modelBuilder.Entity<Entry>()
-            .HasOne(e => e.Topic)
-            .WithMany()
-            .HasForeignKey(e => e.TopicId)
-            .OnDelete(DeleteBehavior.Cascade); // Cascade delete entries when a topic is deleted
-
-        // Configure the relationship between Topic and User
-        modelBuilder.Entity<Topic>()
-            .HasOne(t => t.CreatedByUser)
-            .WithMany()
-            .HasForeignKey(t => t.CreatedByUserId)
-            .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
 
         // Configure UserAgreementAcceptance relationships
         modelBuilder.Entity<UserAgreementAcceptance>()
@@ -170,5 +154,96 @@ public class DictionaryDbContext : DbContext
 
         modelBuilder.Entity<Conversation>()
             .HasIndex(c => new { c.User2Id, c.LastMessageAt });
+
+        // Configure Category relationships
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Slug)
+            .IsUnique();
+
+        // Configure Topic relationships - Updated
+        modelBuilder.Entity<Topic>()
+            .HasOne(t => t.Category)
+            .WithMany(c => c.Topics)
+            .HasForeignKey(t => t.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Topic>()
+            .HasOne(t => t.CreatedByUser)
+            .WithMany(u => u.Topics)
+            .HasForeignKey(t => t.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Topic>()
+            .HasIndex(t => t.Slug)
+            .IsUnique();
+
+        // Configure Entry relationships - Updated
+        modelBuilder.Entity<Entry>()
+            .HasOne(e => e.Topic)
+            .WithMany(t => t.Entries)
+            .HasForeignKey(e => e.TopicId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Entry>()
+            .HasOne(e => e.CreatedByUser)
+            .WithMany(u => u.Entries)
+            .HasForeignKey(e => e.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Configure EntryFavorite relationships
+        modelBuilder.Entity<EntryFavorite>()
+            .HasOne(ef => ef.User)
+            .WithMany(u => u.FavoriteEntries)
+            .HasForeignKey(ef => ef.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EntryFavorite>()
+            .HasOne(ef => ef.Entry)
+            .WithMany(e => e.Favorites)
+            .HasForeignKey(ef => ef.EntryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Prevent duplicate favorites
+        modelBuilder.Entity<EntryFavorite>()
+            .HasIndex(ef => new { ef.UserId, ef.EntryId })
+            .IsUnique();
+
+        // Configure EntryLink relationships
+        modelBuilder.Entity<EntryLink>()
+            .HasOne(el => el.Entry)
+            .WithMany(e => e.Links)
+            .HasForeignKey(el => el.EntryId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Performance indexes
+        modelBuilder.Entity<Topic>()
+            .HasIndex(t => new { t.CategoryId, t.LastEntryAt });
+
+        modelBuilder.Entity<Entry>()
+            .HasIndex(e => new { e.TopicId, e.CreatedAt });
+
+        modelBuilder.Entity<Entry>()
+            .HasIndex(e => new { e.CreatedByUserId, e.CreatedAt });
+
+        modelBuilder.Entity<EntryFavorite>()
+            .HasIndex(ef => new { ef.UserId, ef.CreatedAt });
+
+        // Configure UserBlock relationships
+        modelBuilder.Entity<UserBlock>()
+            .HasOne(ub => ub.BlockingUser)
+            .WithMany()
+            .HasForeignKey(ub => ub.BlockingUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserBlock>()
+            .HasOne(ub => ub.BlockedUser)
+            .WithMany()
+            .HasForeignKey(ub => ub.BlockedUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Prevent duplicate blocks
+        modelBuilder.Entity<UserBlock>()
+            .HasIndex(ub => new { ub.BlockingUserId, ub.BlockedUserId })
+            .IsUnique();
     }
 }

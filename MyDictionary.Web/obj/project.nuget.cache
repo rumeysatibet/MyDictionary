@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "MZNLZLKIgLs=",
+  "dgSpecHash": "Kdm5q13M5oA=",
   "success": true,
   "projectFilePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
   "expectedPackageFiles": [
@@ -57,8 +57,10 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "warningLevel": 1,
       "message": "MyDictionary.ServiceDefaults depends on Microsoft.Extensions.Http.Resilience (>= 9.3.1) but Microsoft.Extensions.Http.Resilience 9.3.1 was not found. Microsoft.Extensions.Http.Resilience 9.4.0 was resolved instead.",
+      "projectPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
       "libraryId": "Microsoft.Extensions.Http.Resilience",
       "targetGraphs": [
         "net9.0"

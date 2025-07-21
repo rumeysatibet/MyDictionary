@@ -21,6 +21,7 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\d
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\appsettings.Development.json
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.js
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map
@@ -34,6 +35,7 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\app.css
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
+C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\appsettings.json
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
@@ -45,6 +47,8 @@ C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\d
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
 C:\DEV\Github\MyDictionary\MyDictionary\MyDictionary.Web\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
 wwwroot\app.css
+wwwroot\appsettings.Development.json
+wwwroot\appsettings.json
 wwwroot\favicon.png
 wwwroot\js\messages.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css

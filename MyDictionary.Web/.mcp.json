@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "mcpprobe": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:\\DEV\\Github\\Src\\Mcp\\McpProbe.Mcp.Server",
+        "--",
+        "--project-root",
+        "."
+      ],
+      "cwd": ".",
+      "env": {
+        "MCPPROBE_PROJECT": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web",
+        "MCPPROBE_PROBEDATA": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\_probedata",
+        "MCPPROBE_LOG_PATH": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\_probedata"
+      }
+    }
+  }
+}

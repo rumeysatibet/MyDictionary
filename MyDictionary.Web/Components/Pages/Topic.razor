@@ -1,0 +1,456 @@
+@page "/topic/{slug}"
+@rendermode InteractiveServer
+@using MyDictionary.Web.Services
+@inject AuthenticationStateService AuthService
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Topic> Logger
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@topicData?.Title - MyDictionary</PageTitle>
+
+<div class="topic-container">
+    @if (topicData != null)
+    {
+        <div class="topic-header">
+            <div class="topic-info">
+                <div class="topic-title-section">
+                    <h1 class="topic-title">@topicData.Title</h1>
+                    <span class="topic-category" style="background-color: @topicData.Category.Color">
+                        @topicData.Category.Name
+                    </span>
+                </div>
+                <div class="topic-meta">
+                    <span class="topic-stat">@topicData.EntryCount entry</span>
+                    <span class="topic-stat">@topicData.ViewCount görüntüleme</span>
+                    <span class="topic-author">@topicData.CreatedBy tarafından açıldı</span>
+                </div>
+            </div>
+            
+            @if (AuthService.IsAuthenticated)
+            {
+                <div class="topic-actions">
+                    <button class="btn btn-primary" @onclick="ShowNewEntryForm">
+                        entry yaz
+                    </button>
+                </div>
+            }
+        </div>
+
+        @if (showNewEntryForm && AuthService.IsAuthenticated)
+        {
+            <div class="new-entry-form">
+                <div class="form-header">
+                    <h3>yeni entry</h3>
+                    <button class="btn-close" @onclick="HideNewEntryForm">×</button>
+                </div>
+                <textarea @bind="newEntryContent" placeholder="entry'ini buraya yaz..." class="entry-textarea"></textarea>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" @onclick="HideNewEntryForm">iptal</button>
+                    <button class="btn btn-primary" @onclick="SubmitNewEntry" disabled="@string.IsNullOrWhiteSpace(newEntryContent)">
+                        gönder
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="entries-section">
+            @if (topicData.Entries != null && topicData.Entries.Any())
+            {
+                <div class="entries-list">
+                    @foreach (var entry in topicData.Entries)
+                    {
+                        <div class="entry-card" id="entry-@entry.Id">
+                            <div class="entry-header">
+                                <div class="entry-author-info">
+                                    <a href="/user/@entry.CreatedBy" class="entry-author">@entry.CreatedBy</a>
+                                    <span class="entry-date">@GetTimeAgo(entry.CreatedAt)</span>
+                                    @if (entry.IsEdited)
+                                    {
+                                        <span class="entry-edited">(düzenlenmiş)</span>
+                                    }
+                                </div>
+                                <div class="entry-actions">
+                                    @if (AuthService.IsAuthenticated)
+                                    {
+                                        <button class="btn-favorite @(entry.IsFavorited ? "favorited" : "")" 
+                                                @onclick="() => ToggleFavorite(entry.Id)">
+                                            <span class="favorite-icon">♥</span>
+                                            <span class="favorite-count">@entry.FavoriteCount</span>
+                                        </button>
+                                        
+                                        @if (CanDeleteEntry(entry))
+                                        {
+                                            <button class="btn-delete" 
+                                                    @onclick="() => ConfirmDeleteEntry(entry.Id)"
+                                                    title="entry'yi sil">
+                                                🗑️
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="entry-content">
+                                <MyDictionary.Web.Components.Shared.EntryContent Content="@entry.Content" ContentHtml="@entry.ContentHtml" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="no-entries">
+                    <p>henüz bu başlıkta entry yok.</p>
+                    @if (AuthService.IsAuthenticated)
+                    {
+                        <button class="btn btn-primary" @onclick="ShowNewEntryForm">
+                            ilk entry'yi sen yaz!
+                        </button>
+                    }
+                    else
+                    {
+                        <p><a href="/login">giriş yap</a> ve ilk entry'yi sen yaz!</p>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else if (loading)
+    {
+        <div class="loading">yükleniyor...</div>
+    }
+    else
+    {
+        <div class="not-found">
+            <h1>başlık bulunamadı</h1>
+            <p>aradığın başlık bulunamadı veya kaldırılmış olabilir.</p>
+            <div class="not-found-actions">
+                <a href="/" class="btn btn-secondary">ana sayfa</a>
+                @if (AuthService.IsAuthenticated)
+                {
+                    <a href="/new-topic?title=@Uri.EscapeDataString(GetTopicTitleFromSlug())" class="btn btn-primary">bu konuyu aç</a>
+                }
+                else
+                {
+                    <p class="create-topic-hint">bu konuyu açmak için <a href="/login">giriş yap</a></p>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+    
+    private TopicDetailDto? topicData;
+    private bool loading = true;
+    private bool showNewEntryForm = false;
+    private string newEntryContent = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.InitializeAsync();
+        await LoadTopicDataAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AuthService.LoadFromStorageAsync();
+        }
+    }
+
+    private async Task LoadTopicDataAsync()
+    {
+        try
+        {
+            loading = true;
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetFromJsonAsync<TopicDetailDto>($"https://apiservice/api/topics/slug/{Slug}");
+            
+            if (response != null)
+            {
+                topicData = response;
+                Logger.LogInformation($"🎯 Topic loaded: {topicData.Title}, Entry count: {topicData.Entries?.Count ?? 0}");
+                
+                // Kullanıcı giriş yapmışsa favori durumlarını kontrol et
+                if (AuthService.IsAuthenticated && AuthService.CurrentUser != null)
+                {
+                    await LoadFavoriteStatesAsync();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Başlık verileri yüklenirken hata oluştu: {Slug}", Slug);
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadFavoriteStatesAsync()
+    {
+        if (topicData?.Entries == null || !AuthService.IsAuthenticated || AuthService.CurrentUser == null)
+            return;
+
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            foreach (var entry in topicData.Entries)
+            {
+                var favoriteResponse = await httpClient.GetFromJsonAsync<FavoriteCheckDto>(
+                    $"https://apiservice/api/favorites/check?userId={AuthService.CurrentUser.Id}&entryId={entry.Id}");
+                
+                if (favoriteResponse != null)
+                {
+                    entry.IsFavorited = favoriteResponse.IsFavorited;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Favori durumları yüklenirken hata oluştu");
+        }
+    }
+
+    private void ShowNewEntryForm()
+    {
+        showNewEntryForm = true;
+        newEntryContent = string.Empty;
+    }
+
+    private void HideNewEntryForm()
+    {
+        showNewEntryForm = false;
+        newEntryContent = string.Empty;
+    }
+
+    private async Task SubmitNewEntry()
+    {
+        if (string.IsNullOrWhiteSpace(newEntryContent) || !AuthService.IsAuthenticated || AuthService.CurrentUser == null || topicData == null)
+            return;
+
+        try
+        {
+            var request = new CreateEntryRequest
+            {
+                Content = newEntryContent.Trim(),
+                TopicId = topicData.Id,
+                CreatedByUserId = AuthService.CurrentUser.Id
+            };
+
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.PostAsJsonAsync("https://apiservice/api/entries", request);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                HideNewEntryForm();
+                await LoadTopicDataAsync(); // Sayfayı yenile
+            }
+            else
+            {
+                Logger.LogError("Entry gönderilirken hata oluştu: {StatusCode}", response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Entry gönderilirken hata oluştu");
+        }
+    }
+
+    private async Task ToggleFavorite(int entryId)
+    {
+        if (!AuthService.IsAuthenticated || AuthService.CurrentUser == null || topicData?.Entries == null)
+            return;
+
+        var entry = topicData.Entries.FirstOrDefault(e => e.Id == entryId);
+        if (entry == null) return;
+
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            if (entry.IsFavorited)
+            {
+                // Favorilerden kaldır
+                var requestObj = new { UserId = AuthService.CurrentUser.Id, EntryId = entryId };
+                var json = System.Text.Json.JsonSerializer.Serialize(requestObj);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                
+                var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "https://apiservice/api/favorites")
+                {
+                    Content = content
+                };
+                
+                var response = await httpClient.SendAsync(requestMessage);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    entry.IsFavorited = false;
+                    entry.FavoriteCount = Math.Max(0, entry.FavoriteCount - 1);
+                }
+            }
+            else
+            {
+                // Favorilere ekle
+                var requestObj = new { UserId = AuthService.CurrentUser.Id, EntryId = entryId };
+                var response = await httpClient.PostAsJsonAsync("https://apiservice/api/favorites", requestObj);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    entry.IsFavorited = true;
+                    entry.FavoriteCount++;
+                }
+            }
+            
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Favori işlemi sırasında hata oluştu");
+        }
+    }
+
+    private bool CanDeleteEntry(EntryDetailDto entry)
+    {
+        // Kullanıcı sadece kendi entry'lerini silebilir
+        return AuthService.IsAuthenticated && 
+               AuthService.CurrentUser?.Username?.Equals(entry.CreatedBy, StringComparison.OrdinalIgnoreCase) == true;
+    }
+    
+    private async Task ConfirmDeleteEntry(int entryId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Bu entry'yi silmek istediğinden emin misin?");
+        if (confirmed)
+        {
+            await DeleteEntry(entryId);
+        }
+    }
+    
+    private async Task DeleteEntry(int entryId)
+    {
+        try
+        {
+            if (AuthService.CurrentUser?.Id == null)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Kullanıcı bilgisi alınamadı.");
+                return;
+            }
+
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.DeleteAsync($"https://apiservice/api/entries/{entryId}?userId={AuthService.CurrentUser.Id}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                // Entry'yi listeden kaldır
+                if (topicData?.Entries != null)
+                {
+                    var entryToRemove = topicData.Entries.FirstOrDefault(e => e.Id == entryId);
+                    if (entryToRemove != null)
+                    {
+                        topicData.Entries.Remove(entryToRemove);
+                        topicData.EntryCount--;
+                        StateHasChanged();
+                    }
+                }
+                
+                Logger.LogInformation($"Entry {entryId} silindi");
+            }
+            else
+            {
+                Logger.LogError($"Entry silme hatası: {response.StatusCode}");
+                var errorMessage = response.StatusCode == System.Net.HttpStatusCode.Forbidden 
+                    ? "Bu entry'yi silme yetkiniz yok." 
+                    : "Entry silinirken bir hata oluştu.";
+                await JSRuntime.InvokeVoidAsync("alert", errorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Entry silme sırasında hata oluştu");
+            await JSRuntime.InvokeVoidAsync("alert", "Entry silinirken bir hata oluştu.");
+        }
+    }
+
+    private string GetTopicTitleFromSlug()
+    {
+        // Slug'ı title'a dönüştür (basit yaklaşım)
+        return Slug.Replace("-", " ");
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+        
+        if (timeSpan.TotalMinutes < 1)
+            return "şimdi";
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes} dakika önce";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours} saat önce";
+        if (timeSpan.TotalDays < 7)
+            return $"{(int)timeSpan.TotalDays} gün önce";
+        
+        return dateTime.ToString("dd.MM.yyyy");
+    }
+
+    // DTO sınıfları
+    public class TopicDetailDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
+        public CategoryDto Category { get; set; } = new();
+        public string CreatedBy { get; set; } = string.Empty;
+        public int EntryCount { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastEntryAt { get; set; }
+        public List<EntryDetailDto> Entries { get; set; } = new();
+    }
+
+    public class CategoryDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+    }
+
+    public class EntryDetailDto
+    {
+        public int Id { get; set; }
+        public string Content { get; set; } = string.Empty;
+        public string ContentHtml { get; set; } = string.Empty;
+        public string CreatedBy { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int FavoriteCount { get; set; }
+        public bool IsEdited { get; set; }
+        public bool IsFavorited { get; set; }
+    }
+
+    public class CreateEntryRequest
+    {
+        public string Content { get; set; } = string.Empty;
+        public int TopicId { get; set; }
+        public int CreatedByUserId { get; set; }
+    }
+
+    public class AddFavoriteRequest
+    {
+        public int UserId { get; set; }
+        public int EntryId { get; set; }
+    }
+
+    public class RemoveFavoriteRequest
+    {
+        public int UserId { get; set; }
+        public int EntryId { get; set; }
+    }
+
+    public class FavoriteCheckDto
+    {
+        public bool IsFavorited { get; set; }
+    }
+}

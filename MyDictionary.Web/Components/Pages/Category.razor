@@ -1,0 +1,300 @@
+@page "/category/{slug}"
+@rendermode InteractiveServer
+@using System.Text.Json
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<Category> Logger
+@inject NavigationManager Navigation
+
+<PageTitle>@(category?.Name ?? "Kategori Bulunamadı") - MyDictionary</PageTitle>
+
+<div class="category-page">
+    @if (isLoading)
+    {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Kategori yükleniyor...</p>
+        </div>
+    }
+    else if (category == null)
+    {
+        <div class="not-found-container">
+            <div class="not-found-content">
+                <h1>😕 Kategori Bulunamadı</h1>
+                <p>Aradığınız kategori mevcut değil veya kaldırılmış olabilir.</p>
+                <a href="/" class="btn-primary">Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="category-header">
+            <div class="category-info">
+                <span class="category-icon">@category.Icon</span>
+                <div class="category-details">
+                    <h1>@category.Name</h1>
+                    <p class="category-description">@category.Description</p>
+                    <div class="category-stats">
+                        <span class="stat">@category.TopicCount topic</span>
+                        <span class="stat">@totalEntries entry</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (topics.Any())
+        {
+            <div class="category-topics">
+                <div class="topics-header">
+                    <h2>📝 Topic'ler</h2>
+                    <div class="sort-options">
+                        <select @onchange="OnSortChanged" class="sort-select">
+                            <option value="latest">En Yeni</option>
+                            <option value="popular">En Popüler</option>
+                            <option value="entries">Entry Sayısı</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="topics-list">
+                    @foreach (var topic in topics)
+                    {
+                        <div class="topic-item" @onclick="() => NavigateToTopic(topic.Slug)">
+                            <div class="topic-content">
+                                <h3 class="topic-title">@topic.Title</h3>
+                                <div class="topic-meta">
+                                    <span class="topic-author">@topic.CreatedByUsername</span>
+                                    <span class="topic-date">@GetTimeAgo(topic.CreatedAt)</span>
+                                    <span class="topic-stats">
+                                        @topic.EntryCount entry • @topic.ViewCount görüntülenme
+                                    </span>
+                                </div>
+                                @if (topic.LastEntryAt.HasValue)
+                                {
+                                    <div class="last-entry">
+                                        Son entry: @GetTimeAgo(topic.LastEntryAt.Value)
+                                    </div>
+                                }
+                            </div>
+                            <div class="topic-arrow">→</div>
+                        </div>
+                    }
+                </div>
+
+                @if (hasMoreTopics)
+                {
+                    <div class="load-more">
+                        <button class="btn-secondary" @onclick="LoadMoreTopics" disabled="@isLoadingMore">
+                            @if (isLoadingMore)
+                            {
+                                <span>Yükleniyor...</span>
+                            }
+                            else
+                            {
+                                <span>Daha Fazla Yükle</span>
+                            }
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="no-topics">
+                <div class="no-topics-content">
+                    <span class="no-topics-icon">📝</span>
+                    <h3>Henüz Topic Yok</h3>
+                    <p>Bu kategoride henüz hiç topic bulunmuyor.</p>
+                    <p>İlk topic'i sen aç!</p>
+                    <a href="/newtopic" class="btn-primary">Topic Aç</a>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string? Slug { get; set; }
+    
+    private CategoryModel? category;
+    private List<TopicModel> topics = new();
+    private bool isLoading = true;
+    private bool isLoadingMore = false;
+    private bool hasMoreTopics = false;
+    private int currentPage = 1;
+    private int pageSize = 20;
+    private string sortBy = "latest";
+    private int totalEntries = 0;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(Slug))
+        {
+            await LoadCategoryData();
+        }
+    }
+
+    private async Task LoadCategoryData()
+    {
+        try
+        {
+            isLoading = true;
+            StateHasChanged();
+
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // Kategori bilgilerini yükle
+            var categoryResponse = await httpClient.GetAsync($"https://apiservice/api/categories/{Slug}");
+            
+            if (categoryResponse.IsSuccessStatusCode)
+            {
+                var categoryContent = await categoryResponse.Content.ReadAsStringAsync();
+                var categoryJson = JsonSerializer.Deserialize<JsonElement>(categoryContent);
+                
+                if (categoryJson.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (categoryJson.TryGetProperty("category", out var categoryElement))
+                    {
+                        category = new CategoryModel
+                        {
+                            Id = categoryElement.GetProperty("id").GetInt32(),
+                            Name = categoryElement.GetProperty("name").GetString() ?? "",
+                            Slug = categoryElement.GetProperty("slug").GetString() ?? "",
+                            Description = categoryElement.GetProperty("description").GetString() ?? "",
+                            Icon = categoryElement.GetProperty("icon").GetString() ?? "📂",
+                            Color = categoryElement.TryGetProperty("color", out var colorElement) ? colorElement.GetString() ?? "" : "",
+                            TopicCount = categoryElement.GetProperty("topicCount").GetInt32()
+                        };
+                    }
+                }
+                
+                // Topic'leri yükle
+                await LoadTopics();
+            }
+            else
+            {
+                Logger.LogWarning($"Kategori bulunamadı: {Slug}");
+                category = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Kategori yükleme hatası: {ex.Message}");
+            category = null;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadTopics(bool append = false)
+    {
+        try
+        {
+            if (!append)
+            {
+                topics.Clear();
+                currentPage = 1;
+            }
+
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var topicsResponse = await httpClient.GetAsync($"https://apiservice/api/categories/{Slug}/topics?page={currentPage}&pageSize={pageSize}&sortBy={sortBy}");
+            
+            if (topicsResponse.IsSuccessStatusCode)
+            {
+                var topicsContent = await topicsResponse.Content.ReadAsStringAsync();
+                var topicsJson = JsonSerializer.Deserialize<JsonElement>(topicsContent);
+                
+                if (topicsJson.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    totalEntries = topicsJson.TryGetProperty("totalEntries", out var entriesElement) ? entriesElement.GetInt32() : 0;
+                    hasMoreTopics = topicsJson.TryGetProperty("hasMore", out var hasMoreElement) && hasMoreElement.GetBoolean();
+                    
+                    if (topicsJson.TryGetProperty("topics", out var topicsElement))
+                    {
+                        foreach (var topicElement in topicsElement.EnumerateArray())
+                        {
+                            var topic = new TopicModel
+                            {
+                                Id = topicElement.GetProperty("id").GetInt32(),
+                                Title = topicElement.GetProperty("title").GetString() ?? "",
+                                Slug = topicElement.GetProperty("slug").GetString() ?? "",
+                                CreatedByUsername = topicElement.GetProperty("createdByUsername").GetString() ?? "",
+                                CreatedAt = topicElement.GetProperty("createdAt").GetDateTime(),
+                                EntryCount = topicElement.GetProperty("entryCount").GetInt32(),
+                                ViewCount = topicElement.GetProperty("viewCount").GetInt32(),
+                                LastEntryAt = topicElement.TryGetProperty("lastEntryAt", out var lastEntryElement) && lastEntryElement.ValueKind != JsonValueKind.Null ? lastEntryElement.GetDateTime() : null
+                            };
+                            topics.Add(topic);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Topic'ler yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task OnSortChanged(ChangeEventArgs e)
+    {
+        sortBy = e.Value?.ToString() ?? "latest";
+        await LoadTopics();
+        StateHasChanged();
+    }
+
+    private async Task LoadMoreTopics()
+    {
+        if (isLoadingMore || !hasMoreTopics) return;
+        
+        isLoadingMore = true;
+        currentPage++;
+        
+        await LoadTopics(append: true);
+        
+        isLoadingMore = false;
+        StateHasChanged();
+    }
+
+    private void NavigateToTopic(string topicSlug)
+    {
+        Navigation.NavigateTo($"/topic/{topicSlug}");
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan.TotalMinutes < 1) return "az önce";
+        if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes}dk önce";
+        if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours}sa önce";
+        if (timeSpan.TotalDays < 7) return $"{(int)timeSpan.TotalDays}gün önce";
+        
+        return dateTime.ToString("dd MMM yyyy");
+    }
+
+    public class CategoryModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Slug { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public string Color { get; set; } = "";
+        public int TopicCount { get; set; }
+    }
+
+    public class TopicModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Slug { get; set; } = "";
+        public string CreatedByUsername { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastEntryAt { get; set; }
+        public int EntryCount { get; set; }
+        public int ViewCount { get; set; }
+    }
+}

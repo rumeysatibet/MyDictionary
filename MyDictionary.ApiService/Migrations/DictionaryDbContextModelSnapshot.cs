@@ -22,6 +22,51 @@ namespace MyDictionary.ApiService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MyDictionary.ApiService.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("MyDictionary.ApiService.Models.Conversation", b =>
                 {
                     b.Property<int>("Id")
@@ -71,28 +116,96 @@ namespace MyDictionary.ApiService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ContentHtml")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("DownVotes")
+                    b.Property<int>("FavoriteCount")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
 
                     b.Property<int>("TopicId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UpVotes")
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId", "CreatedAt");
+
+                    b.HasIndex("TopicId", "CreatedAt");
+
+                    b.ToTable("Entries");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.EntryFavorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EntryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("EntryId");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("UserId", "CreatedAt");
 
-                    b.ToTable("Entries");
+                    b.HasIndex("UserId", "EntryId")
+                        .IsUnique();
+
+                    b.ToTable("EntryFavorites");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.EntryLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EntryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntryId");
+
+                    b.ToTable("EntryLinks");
                 });
 
             modelBuilder.Entity("MyDictionary.ApiService.Models.FriendRequest", b =>
@@ -237,19 +350,40 @@ namespace MyDictionary.ApiService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CreatedByUserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("EntryCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastEntryAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryId", "LastEntryAt");
 
                     b.ToTable("Topics");
                 });
@@ -264,6 +398,9 @@ namespace MyDictionary.ApiService.Migrations
 
                     b.Property<string>("About")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("AllowMessagesFromFriendsOnly")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -287,8 +424,35 @@ namespace MyDictionary.ApiService.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
+                    b.Property<bool>("HideFollowersList")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HideOnlineStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsProfilePrivate")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("MakeEntriesPrivate")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyOnEntryComments")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyOnEntryLikes")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyOnFriendRequests")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyOnNewFollowers")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyOnNewMessages")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -300,6 +464,9 @@ namespace MyDictionary.ApiService.Migrations
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TopicCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -380,6 +547,33 @@ namespace MyDictionary.ApiService.Migrations
                     b.ToTable("UserAgreementAcceptances");
                 });
 
+            modelBuilder.Entity("MyDictionary.ApiService.Models.UserBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BlockedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("BlockedUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BlockingUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlockedUserId");
+
+                    b.HasIndex("BlockingUserId", "BlockedUserId")
+                        .IsUnique();
+
+                    b.ToTable("UserBlocks");
+                });
+
             modelBuilder.Entity("MyDictionary.ApiService.Models.Conversation", b =>
                 {
                     b.HasOne("MyDictionary.ApiService.Models.Message", "LastMessage")
@@ -409,13 +603,13 @@ namespace MyDictionary.ApiService.Migrations
             modelBuilder.Entity("MyDictionary.ApiService.Models.Entry", b =>
                 {
                     b.HasOne("MyDictionary.ApiService.Models.User", "CreatedByUser")
-                        .WithMany()
+                        .WithMany("Entries")
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MyDictionary.ApiService.Models.Topic", "Topic")
-                        .WithMany()
+                        .WithMany("Entries")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -423,6 +617,36 @@ namespace MyDictionary.ApiService.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.EntryFavorite", b =>
+                {
+                    b.HasOne("MyDictionary.ApiService.Models.Entry", "Entry")
+                        .WithMany("Favorites")
+                        .HasForeignKey("EntryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyDictionary.ApiService.Models.User", "User")
+                        .WithMany("FavoriteEntries")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entry");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.EntryLink", b =>
+                {
+                    b.HasOne("MyDictionary.ApiService.Models.Entry", "Entry")
+                        .WithMany("Links")
+                        .HasForeignKey("EntryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Entry");
                 });
 
             modelBuilder.Entity("MyDictionary.ApiService.Models.FriendRequest", b =>
@@ -502,11 +726,19 @@ namespace MyDictionary.ApiService.Migrations
 
             modelBuilder.Entity("MyDictionary.ApiService.Models.Topic", b =>
                 {
+                    b.HasOne("MyDictionary.ApiService.Models.Category", "Category")
+                        .WithMany("Topics")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MyDictionary.ApiService.Models.User", "CreatedByUser")
-                        .WithMany()
+                        .WithMany("Topics")
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Category");
 
                     b.Navigation("CreatedByUser");
                 });
@@ -528,6 +760,51 @@ namespace MyDictionary.ApiService.Migrations
                     b.Navigation("Agreement");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.UserBlock", b =>
+                {
+                    b.HasOne("MyDictionary.ApiService.Models.User", "BlockedUser")
+                        .WithMany()
+                        .HasForeignKey("BlockedUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyDictionary.ApiService.Models.User", "BlockingUser")
+                        .WithMany()
+                        .HasForeignKey("BlockingUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BlockedUser");
+
+                    b.Navigation("BlockingUser");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.Category", b =>
+                {
+                    b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.Entry", b =>
+                {
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Links");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.Topic", b =>
+                {
+                    b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("MyDictionary.ApiService.Models.User", b =>
+                {
+                    b.Navigation("Entries");
+
+                    b.Navigation("FavoriteEntries");
+
+                    b.Navigation("Topics");
                 });
 #pragma warning restore 612, 618
         }

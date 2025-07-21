@@ -3,12 +3,60 @@
   "WorkspaceRootPath": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\_probedata\\debug_logs.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\_probedata\\debug_logs.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\mydictionary.web.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\mydictionary.web.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\pages\\contact.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\components\\pages\\contact.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\services\\authenticationstateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\services\\authenticationstateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -21,10 +69,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{8CAE925A-E0F8-4DF0-B18A-D373E4C79577}|MyDictionary.Web\\MyDictionary.Web.csproj|solutionrelative:mydictionary.web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|c:\\dev\\github\\mydictionary\\mydictionary\\mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{44575ECD-C583-4DF7-A3A9-E1948EA49A83}|MyDictionary.ApiService\\MyDictionary.ApiService.csproj|solutionrelative:mydictionary.apiservice\\mydictionary.apiservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,36 +78,192 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 7,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\_Imports.razor",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\_Imports.razor",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\_Imports.razor",
+              "RelativeToolTip": "MyDictionary.Web\\Components\\_Imports.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-21T01:06:17.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\appsettings.json",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\appsettings.json",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\appsettings.json",
+              "RelativeToolTip": "MyDictionary.Web\\appsettings.json",
+              "ViewState": "AgIAABQAAAAAAAAAAAAAAC8AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-21T01:03:44.98Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MyDictionary.Web",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\MyDictionary.Web.csproj",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\MyDictionary.Web.csproj",
+              "RelativeToolTip": "MyDictionary.Web\\MyDictionary.Web.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-21T00:51:32.872Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\appsettings.json",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\appsettings.json",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\appsettings.json",
+              "RelativeToolTip": "MyDictionary.ApiService\\appsettings.json",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-21T00:32:22.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "debug_logs.txt",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\_probedata\\debug_logs.txt",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\_probedata\\debug_logs.txt",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\_probedata\\debug_logs.txt",
+              "RelativeToolTip": "MyDictionary.ApiService\\_probedata\\debug_logs.txt",
+              "ViewState": "AgIAAF4OAAAAAIBLn+ohwAYCAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-07-21T00:30:22.265Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Controllers\\UserController.cs",
+              "RelativeToolTip": "MyDictionary.ApiService\\Controllers\\UserController.cs",
+              "ViewState": "AgIAADcBAAAAAAAAAAASwEcBAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T00:29:11.877Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Program.cs",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\Program.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Program.cs",
+              "RelativeToolTip": "MyDictionary.ApiService\\Program.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAAAIwG4AAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T00:28:40.35Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Contact.razor",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Pages\\Contact.razor",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\Pages\\Contact.razor",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Pages\\Contact.razor",
+              "RelativeToolTip": "MyDictionary.Web\\Components\\Pages\\Contact.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-20T00:18:00.203Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\Services\\AuthService.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Services\\AuthService.cs",
+              "RelativeToolTip": "MyDictionary.ApiService\\Services\\AuthService.cs",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAswIMAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-20T00:17:50.372Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "MyDictionary.ApiService\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAAAEYAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-20T00:17:48.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MainLayout.razor",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Layout\\MainLayout.razor",
+              "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\Layout\\MainLayout.razor",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "MyDictionary.Web\\Components\\Layout\\MainLayout.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-20T00:17:26.555Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Program.cs",
               "RelativeDocumentMoniker": "MyDictionary.Web\\Program.cs",
               "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Program.cs",
               "RelativeToolTip": "MyDictionary.Web\\Program.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAswBkAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-19T18:55:59.138Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 7,
+              "Title": "MyDictionary.ApiService.csproj",
+              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "RelativeDocumentMoniker": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "RelativeToolTip": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAYwCUAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-19T14:30:36.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "AuthenticationStateService.cs",
               "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Services\\AuthenticationStateService.cs",
               "RelativeDocumentMoniker": "MyDictionary.Web\\Services\\AuthenticationStateService.cs",
               "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Services\\AuthenticationStateService.cs",
               "RelativeToolTip": "MyDictionary.Web\\Services\\AuthenticationStateService.cs",
-              "ViewState": "AgIAAF8AAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIsAAAAAAAAAAAAowJcAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-19T15:34:13.675Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 14,
               "Title": "App.razor",
               "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\App.razor",
               "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\App.razor",
@@ -75,7 +275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 15,
               "Title": "Routes.razor",
               "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\Components\\Routes.razor",
               "RelativeDocumentMoniker": "MyDictionary.Web\\Components\\Routes.razor",
@@ -87,7 +287,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 16,
               "Title": "bootstrap.js",
               "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
               "RelativeDocumentMoniker": "MyDictionary.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
@@ -96,18 +296,6 @@
               "ViewState": "AgIAAJABAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
               "WhenOpened": "2025-07-19T15:33:38.783Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MyDictionary.ApiService.csproj",
-              "DocumentMoniker": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
-              "RelativeDocumentMoniker": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
-              "ToolTip": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
-              "RelativeToolTip": "MyDictionary.ApiService\\MyDictionary.ApiService.csproj",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAUwB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-07-19T14:30:36.324Z"
             }
           ]
         }

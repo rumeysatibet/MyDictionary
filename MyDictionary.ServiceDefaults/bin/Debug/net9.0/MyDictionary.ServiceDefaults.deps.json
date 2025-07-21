@@ -556,14 +556,7 @@
         }
       },
       "System.Diagnostics.DiagnosticSource/8.0.0": {},
-      "System.IO.Pipelines/9.0.4": {
-        "runtime": {
-          "lib/net9.0/System.IO.Pipelines.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.425.16305"
-          }
-        }
-      },
+      "System.IO.Pipelines/9.0.4": {},
       "System.Memory/4.5.3": {},
       "System.Threading.RateLimiting/8.0.0": {}
     }

@@ -1,0 +1,42 @@
+@inject IJSRuntime JSRuntime
+
+<div class="entry-content-wrapper">
+    @((MarkupString)ProcessedContent)
+</div>
+
+@code {
+    [Parameter] public string Content { get; set; } = string.Empty;
+    [Parameter] public string? ContentHtml { get; set; }
+
+    private string ProcessedContent => ProcessContent();
+
+    private string ProcessContent()
+    {
+        var htmlContent = !string.IsNullOrEmpty(ContentHtml) ? ContentHtml : Content;
+        
+        if (string.IsNullOrEmpty(htmlContent))
+            return "";
+
+        // Debug için
+        System.Diagnostics.Debug.WriteLine($"[EntryContent] Processing: {htmlContent}");
+
+        // entry-link span'lerini component ile değiştir
+        var urlPattern = @"<span class=""entry-link"" data-url=""([^""]+)"">\(bakınız\)</span>";
+        var processed = System.Text.RegularExpressions.Regex.Replace(htmlContent, urlPattern, match =>
+        {
+            var url = match.Groups[1].Value;
+            System.Diagnostics.Debug.WriteLine($"[EntryContent] Found link: {url}");
+            return $"<span class=\"entry-link\" onclick=\"window.open('{url}', '_blank')\" style=\"color: #007bff; cursor: pointer; text-decoration: underline; font-style: italic;\" title=\"{url}\">(bakınız)</span>";
+        });
+
+        System.Diagnostics.Debug.WriteLine($"[EntryContent] Processed: {processed}");
+        return processed;
+    }
+}
+
+<style>
+    .entry-content-wrapper .entry-link:hover {
+        color: #0056b3;
+        text-decoration: none;
+    }
+</style>

@@ -629,3 +629,60 @@
     background-color: #c82333;
     border-color: #bd2130;
 }
+
+/* Loading and Error States */
+.loading-container[b-5skjydf936] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.loading-spinner[b-5skjydf936] {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #53925F;
+    border-radius: 50%;
+    animation: spin-b-5skjydf936 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin-b-5skjydf936 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-container[b-5skjydf936] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    margin: 40px auto;
+    max-width: 500px;
+}
+
+.error-icon[b-5skjydf936] {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.error-container h3[b-5skjydf936] {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.error-container p[b-5skjydf936] {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px;
+}

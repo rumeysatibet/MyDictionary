@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyDictionary.ApiService.Data;
 using MyDictionary.ApiService.Models;
+using MyDictionary.ApiService.DTOs;
 using System.Security.Claims;
 
 namespace MyDictionary.ApiService.Controllers;
@@ -85,11 +86,35 @@ public class ProfileController : ControllerBase
                 return NotFound(new { success = false, message = "Kullanıcı bulunamadı." });
             }
 
-            // About bilgisini güncelle
-            if (request.About != null)
+            // Email güncelleme
+            if (!string.IsNullOrWhiteSpace(request.Email) && request.Email != user.Email)
             {
-                user.About = request.About.Trim();
-                _logger.LogInformation($"📝 About güncellendi - UserId: {userId}");
+                // E-posta formatı kontrolü
+                if (!IsValidEmail(request.Email))
+                {
+                    _logger.LogWarning($"❌ Profil güncelleme - Geçersiz e-posta formatı - UserId: {userId}, Email: {request.Email}");
+                    return BadRequest(new { success = false, message = "Geçerli bir e-posta adresi girin." });
+                }
+
+                // E-posta zaten kullanılıyor mu kontrol et
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == request.Email.ToLower() && u.Id != userId);
+                
+                if (existingUser != null)
+                {
+                    _logger.LogWarning($"❌ Profil güncelleme - E-posta zaten kullanılıyor - UserId: {userId}, Email: {request.Email}");
+                    return BadRequest(new { success = false, message = "Bu e-posta adresi zaten başka bir kullanıcı tarafından kullanılıyor." });
+                }
+
+                user.Email = request.Email;
+                _logger.LogInformation($"📧 E-posta güncellendi - UserId: {userId}, NewEmail: {request.Email}");
+            }
+
+            // Bio (About) bilgisini güncelle
+            if (request.Bio != null)
+            {
+                user.About = request.Bio.Length > 500 ? request.Bio.Substring(0, 500) : request.Bio;
+                _logger.LogInformation($"📝 Bio güncellendi - UserId: {userId}");
             }
 
             await _context.SaveChangesAsync();
@@ -210,9 +235,18 @@ public class ProfileController : ControllerBase
             return StatusCode(500, new { success = false, message = "Sunucu hatası oluştu.", error = ex.Message });
         }
     }
-}
 
-public class UpdateProfileRequest
-{
-    public string? About { get; set; }
+    // Helper method
+    private static bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

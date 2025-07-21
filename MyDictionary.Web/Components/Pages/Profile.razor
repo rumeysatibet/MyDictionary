@@ -15,6 +15,24 @@
 <PageTitle>@GetPageTitle() - MyDictionary</PageTitle>
 
 <div class="profile-container">
+    @if (isLoadingProfile)
+    {
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Profil yükleniyor...</p>
+        </div>
+    }
+    else if (userNotFound)
+    {
+        <div class="error-container">
+            <div class="error-icon">👤</div>
+            <h3>Kullanıcı Bulunamadı</h3>
+            <p>@username adında bir kullanıcı bulunamadı.</p>
+            <button class="btn btn-primary" @onclick="NavigateToHome">Anasayfaya Dön</button>
+        </div>
+    }
+    else if (currentUser != null)
+    {
     <div class="profile-content">
         <!-- Sol Kolon - Kullanıcı Bilgileri -->
         <div class="profile-sidebar">
@@ -23,7 +41,7 @@
                     <div class="profile-photo">
                         @if (!string.IsNullOrEmpty(currentUser.ProfilePhotoUrl))
                         {
-                            <img src="https://apiservice/uploads/profiles/@currentUser.ProfilePhotoUrl" alt="@currentUser.Username" />
+                            <img src="/uploads/profiles/@currentUser.ProfilePhotoUrl" alt="@currentUser.Username" />
                         }
                         else
                         {
@@ -129,11 +147,11 @@
             <div class="tab-container">
                 <div class="tab-buttons">
                     <button class="tab-btn @(activeTab == "entries" ? "active" : "")" 
-                            @onclick="@(() => SwitchTab("entries"))">
+                            @onclick="@(async () => await SwitchTab("entries"))">
                         girdiğim entry'ler
                     </button>
                     <button class="tab-btn @(activeTab == "favorites" ? "active" : "")" 
-                            @onclick="@(() => SwitchTab("favorites"))">
+                            @onclick="@(async () => await SwitchTab("favorites"))">
                         favori entry'lerim
                     </button>
                 </div>
@@ -152,7 +170,7 @@
                                             <span class="entry-date">@entry.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
                                         </div>
                                         <div class="entry-content">
-                                            @entry.Content
+                                            <EntryContent Content="@entry.Content" ContentHtml="@entry.ContentHtml" />
                                         </div>
                                         <div class="entry-stats">
                                             <span class="vote-count">@entry.VoteCount oy</span>
@@ -184,7 +202,7 @@
                                             <span class="entry-date">@entry.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
                                         </div>
                                         <div class="entry-content">
-                                            @entry.Content
+                                            <EntryContent Content="@entry.Content" ContentHtml="@entry.ContentHtml" />
                                         </div>
                                         <div class="entry-stats">
                                             <span class="vote-count">@entry.VoteCount oy</span>
@@ -252,6 +270,7 @@
             }
         </div>
     </div>
+    }
 </div>
 
 <!-- Takipçi/Takip Modali -->
@@ -315,6 +334,8 @@
     private bool isFollowing = false;
     private string relationshipStatus = "none"; // none, friend, request_sent, request_received
     private int? pendingRequestId = null;
+    private bool isLoadingProfile = false;
+    private bool userNotFound = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -335,8 +356,11 @@
         // Parameter değiştiğinde profili yeniden yükle
         if (!string.IsNullOrEmpty(username))
         {
+            Logger.LogInformation($"📄 Parameter değişti, profil yeniden yükleniyor: {username}");
+            currentUser = new UserProfileModel(); // Reset user data
             await LoadUserProfile();
             await LoadUserEntries();
+            StateHasChanged();
         }
     }
 
@@ -369,6 +393,8 @@
     {
         try
         {
+            isLoadingProfile = true;
+            userNotFound = false;
             Logger.LogInformation($"📄 Profile API çağrısı başlatılıyor - Username: {username}");
             
             var httpClient = HttpClientFactory.CreateClient("ApiService");
@@ -403,12 +429,20 @@
                         {
                             await LoadRelationshipStatus();
                         }
+                        
+                        // User entries'i yükle
+                        await LoadUserEntries();
                     }
                 }
             }
             else
             {
                 Logger.LogError($"❌ Profile API hatası - Status: {response.StatusCode}");
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Logger.LogWarning($"⚠️ Kullanıcı bulunamadı: {username}");
+                    userNotFound = true;
+                }
                 currentUser = null;
             }
         }
@@ -417,26 +451,117 @@
             Logger.LogError($"❌ Profil yükleme hatası: {ex.Message}");
             currentUser = null;
         }
+        finally
+        {
+            isLoadingProfile = false;
+            StateHasChanged();
+        }
     }
 
     private async Task LoadUserEntries()
     {
-        // Simulated data - API çağrısı ile değiştirilecek
-        userEntries = new List<EntryModel>
-        {
-            new() { Id = 1, TopicTitle = "asp.net core", TopicSlug = "asp-net-core", Content = "modern web uygulamaları geliştirmek için harika bir framework...", CreatedAt = DateTime.Now.AddDays(-5), VoteCount = 12, FavoriteCount = 3 },
-            new() { Id = 2, TopicTitle = "clean code", TopicSlug = "clean-code", Content = "okunabilir kod yazmak sanıldığından çok daha önemli...", CreatedAt = DateTime.Now.AddDays(-10), VoteCount = 8, FavoriteCount = 2 }
-        };
+        if (currentUser == null) return;
 
-        favoriteEntries = new List<EntryModel>
+        try
         {
-            new() { Id = 3, TopicTitle = "design patterns", TopicSlug = "design-patterns", Content = "singleton pattern neden kötü olarak kabul ediliyor?", AuthorUsername = "architect_dev", CreatedAt = DateTime.Now.AddDays(-3), VoteCount = 15, FavoriteCount = 7 }
-        };
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetAsync($"https://apiservice/api/entries?userId={currentUser.Id}&pageSize=20");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var entries = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                userEntries.Clear();
+                foreach (var entryElement in entries.EnumerateArray())
+                {
+                    var entry = new EntryModel
+                    {
+                        Id = entryElement.GetProperty("id").GetInt32(),
+                        Content = entryElement.GetProperty("content").GetString() ?? "",
+                        ContentHtml = entryElement.TryGetProperty("contentHtml", out var contentHtmlElement) ? contentHtmlElement.GetString() : null,
+                        CreatedAt = entryElement.GetProperty("createdAt").GetDateTime(),
+                        FavoriteCount = entryElement.GetProperty("favoriteCount").GetInt32(),
+                        TopicTitle = entryElement.GetProperty("topic").GetProperty("title").GetString() ?? "",
+                        TopicSlug = entryElement.GetProperty("topic").GetProperty("slug").GetString() ?? "",
+                        VoteCount = 0 // Vote system henüz yok
+                    };
+                    userEntries.Add(entry);
+                }
+                
+                Logger.LogInformation($"✅ {userEntries.Count} user entry yüklendi");
+            }
+            else
+            {
+                Logger.LogError($"❌ User entries API hatası: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ User entries yükleme hatası: {ex.Message}");
+        }
     }
 
-    private void SwitchTab(string tab)
+    private async Task LoadUserFavorites()
+    {
+        if (currentUser == null) return;
+
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetAsync($"https://apiservice/api/favorites/user/{currentUser.Id}?pageSize=20");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var favorites = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                favoriteEntries.Clear();
+                foreach (var favoriteElement in favorites.EnumerateArray())
+                {
+                    var entryData = favoriteElement.GetProperty("entry");
+                    var entry = new EntryModel
+                    {
+                        Id = entryData.GetProperty("id").GetInt32(),
+                        Content = entryData.GetProperty("content").GetString() ?? "",
+                        ContentHtml = entryData.TryGetProperty("contentHtml", out var contentHtmlElement) ? contentHtmlElement.GetString() : null,
+                        CreatedAt = entryData.GetProperty("createdAt").GetDateTime(),
+                        FavoriteCount = entryData.GetProperty("favoriteCount").GetInt32(),
+                        TopicTitle = entryData.GetProperty("topic").GetProperty("title").GetString() ?? "",
+                        TopicSlug = entryData.GetProperty("topic").GetProperty("slug").GetString() ?? "",
+                        AuthorUsername = entryData.GetProperty("createdBy").GetString() ?? "",
+                        VoteCount = 0 // Vote system henüz yok
+                    };
+                    favoriteEntries.Add(entry);
+                }
+                
+                Logger.LogInformation($"✅ {favoriteEntries.Count} favorite entry yüklendi");
+            }
+            else
+            {
+                Logger.LogError($"❌ User favorites API hatası: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ User favorites yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task SwitchTab(string tab)
     {
         activeTab = tab;
+        
+        if (tab == "entries" && !userEntries.Any())
+        {
+            await LoadUserEntries();
+        }
+        else if (tab == "favorites" && !favoriteEntries.Any())
+        {
+            await LoadUserFavorites();
+        }
+        
+        StateHasChanged();
     }
 
     private void OpenPhotoUpload()
@@ -607,9 +732,57 @@
 
     private async Task RemoveFromFavorites(int entryId)
     {
-        // API çağrısı ile favorilerden çıkarma işlemi
-        favoriteEntries = favoriteEntries.Where(e => e.Id != entryId).ToList();
-        Logger.LogInformation($"Entry {entryId} favorilerden çıkarıldı");
+        Logger.LogInformation($"🗑️ RemoveFromFavorites çağrıldı - EntryId: {entryId}");
+        
+        if (!AuthService.IsAuthenticated || AuthService.CurrentUser == null)
+        {
+            Logger.LogWarning("❌ Kullanıcı giriş yapmamış veya null");
+            return;
+        }
+        
+        Logger.LogInformation($"👤 Kullanıcı: {AuthService.CurrentUser.Username} (ID: {AuthService.CurrentUser.Id})");
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            
+            // Request body olarak JSON gönder
+            var requestObj = new { UserId = AuthService.CurrentUser.Id, EntryId = entryId };
+            var json = JsonSerializer.Serialize(requestObj);
+            Logger.LogInformation($"📤 API'ye gönderilen JSON: {json}");
+            
+            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            
+            var requestMessage = new HttpRequestMessage(HttpMethod.Delete, "https://apiservice/api/favorites")
+            {
+                Content = content
+            };
+            
+            Logger.LogInformation("📡 API çağrısı başlatılıyor...");
+            var response = await httpClient.SendAsync(requestMessage);
+            Logger.LogInformation($"📨 API Response Status: {response.StatusCode}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                // Local state'i güncelle
+                var oldCount = favoriteEntries.Count;
+                favoriteEntries = favoriteEntries.Where(e => e.Id != entryId).ToList();
+                var newCount = favoriteEntries.Count;
+                
+                Logger.LogInformation($"✅ Entry {entryId} favorilerden çıkarıldı - Liste: {oldCount} -> {newCount}");
+                StateHasChanged();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ Favori çıkarma API hatası: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Favori çıkarma hatası: {ex.Message}");
+            Logger.LogError($"❌ Stack trace: {ex.StackTrace}");
+        }
     }
 
     private string GetInitials(string username)
@@ -813,6 +986,11 @@
         }
     }
 
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
     public class UserProfileModel
     {
         public int Id { get; set; }
@@ -831,6 +1009,7 @@
         public string TopicTitle { get; set; } = "";
         public string TopicSlug { get; set; } = "";
         public string Content { get; set; } = "";
+        public string? ContentHtml { get; set; }
         public string? AuthorUsername { get; set; }
         public DateTime CreatedAt { get; set; }
         public int VoteCount { get; set; }

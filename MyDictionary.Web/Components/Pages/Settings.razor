@@ -1,0 +1,1279 @@
+@page "/settings"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@using System.Text
+@using MyDictionary.Web.Services
+@inject ILogger<Settings> Logger
+@inject AuthenticationStateService AuthService
+@inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Ayarlar - MyDictionary</PageTitle>
+
+<div class="settings-container">
+    <div class="settings-layout">
+        <!-- Sol Panel - Ayar Kategorileri -->
+        <div class="settings-sidebar">
+            <div class="settings-nav">
+                <h3>Ayarlar</h3>
+                <div class="nav-items">
+                    <button class="nav-item @(activeTab == "profile" ? "active" : "")" @onclick="@(() => SetActiveTab("profile"))">
+                        <span class="nav-icon">👤</span>
+                        Profil Bilgileri
+                    </button>
+                    <button class="nav-item @(activeTab == "account" ? "active" : "")" @onclick="@(() => SetActiveTab("account"))">
+                        <span class="nav-icon">🔐</span>
+                        Hesap Güvenliği
+                    </button>
+                    <button class="nav-item @(activeTab == "privacy" ? "active" : "")" @onclick="@(() => SetActiveTab("privacy"))">
+                        <span class="nav-icon">🔒</span>
+                        Gizlilik
+                    </button>
+                    <button class="nav-item @(activeTab == "notifications" ? "active" : "")" @onclick="@(() => SetActiveTab("notifications"))">
+                        <span class="nav-icon">🔔</span>
+                        Bildirimler
+                    </button>
+                    <button class="nav-item @(activeTab == "blocked" ? "active" : "")" @onclick="@(() => SetActiveTab("blocked"))">
+                        <span class="nav-icon">🚫</span>
+                        Engellenen Kullanıcılar
+                    </button>
+                    <button class="nav-item danger @(activeTab == "danger" ? "active" : "")" @onclick="@(() => SetActiveTab("danger"))">
+                        <span class="nav-icon">⚠️</span>
+                        Tehlikeli Bölge
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel - Ayar İçeriği -->
+        <div class="settings-content">
+            @if (activeTab == "profile")
+            {
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h2>Profil Bilgileri</h2>
+                        <p>Profil bilgilerinizi güncelleyin</p>
+                    </div>
+
+                    <EditForm Model="profileModel" OnValidSubmit="UpdateProfile">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="form-group">
+                            <label for="username">Kullanıcı Adı</label>
+                            <InputText id="username" @bind-Value="profileModel.Username" class="form-control" readonly />
+                            <small class="form-text">Kullanıcı adı değiştirilemez</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-posta Adresi</label>
+                            <InputText id="email" @bind-Value="profileModel.Email" class="form-control" />
+                            <ValidationMessage For="() => profileModel.Email" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Hakkında</label>
+                            <InputTextArea id="bio" @bind-Value="profileModel.Bio" class="form-control" rows="3" placeholder="Kendiniz hakkında kısa bir açıklama yazın..." />
+                            <small class="form-text">Maksimum 500 karakter</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" disabled="@isUpdatingProfile">
+                                @if (isUpdatingProfile)
+                                {
+                                    <span>Güncellenıyor...</span>
+                                }
+                                else
+                                {
+                                    <span>Profili Güncelle</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            }
+            else if (activeTab == "account")
+            {
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h2>Hesap Güvenliği</h2>
+                        <p>Şifrenizi ve hesap güvenliğinizi yönetin</p>
+                    </div>
+
+                    <!-- Şifre Değiştirme -->
+                    <div class="security-card">
+                        <div class="card-header">
+                            <h3>Şifre Değiştir</h3>
+                            <p>Hesabınızın güvenliği için düzenli olarak şifrenizi değiştirin</p>
+                        </div>
+                        
+                        <EditForm Model="passwordModel" OnValidSubmit="ChangePassword">
+                            <DataAnnotationsValidator />
+                            
+                            <div class="form-group">
+                                <label for="currentPassword">Mevcut Şifre</label>
+                                <InputText id="currentPassword" type="password" @bind-Value="passwordModel.CurrentPassword" class="form-control" />
+                                <ValidationMessage For="() => passwordModel.CurrentPassword" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newPassword">Yeni Şifre</label>
+                                <InputText id="newPassword" type="password" @bind-Value="passwordModel.NewPassword" class="form-control" />
+                                <ValidationMessage For="() => passwordModel.NewPassword" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Yeni Şifre Tekrar</label>
+                                <InputText id="confirmPassword" type="password" @bind-Value="passwordModel.ConfirmPassword" class="form-control" />
+                                <ValidationMessage For="() => passwordModel.ConfirmPassword" />
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" disabled="@isChangingPassword">
+                                    @if (isChangingPassword)
+                                    {
+                                        <span>Değiştiriliyor...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Şifreyi Değiştir</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+
+                    <!-- E-posta Değiştirme -->
+                    <div class="security-card">
+                        <div class="card-header">
+                            <h3>E-posta Değiştir</h3>
+                            <p>Hesabınızla ilişkili e-posta adresini değiştirin</p>
+                        </div>
+                        
+                        <EditForm Model="emailModel" OnValidSubmit="ChangeEmail">
+                            <DataAnnotationsValidator />
+                            
+                            <div class="form-group">
+                                <label for="currentEmail">Mevcut E-posta</label>
+                                <InputText id="currentEmail" @bind-Value="emailModel.CurrentEmail" class="form-control" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="newEmail">Yeni E-posta</label>
+                                <InputText id="newEmail" type="email" @bind-Value="emailModel.NewEmail" class="form-control" />
+                                <ValidationMessage For="() => emailModel.NewEmail" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="passwordForEmail">Şifre</label>
+                                <InputText id="passwordForEmail" type="password" @bind-Value="emailModel.Password" class="form-control" />
+                                <ValidationMessage For="() => emailModel.Password" />
+                                <small class="form-text">Güvenlik için mevcut şifrenizi girin</small>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary" disabled="@isChangingEmail">
+                                    @if (isChangingEmail)
+                                    {
+                                        <span>Değiştiriliyor...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>E-postayı Değiştir</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            }
+            else if (activeTab == "privacy")
+            {
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h2>Gizlilik Ayarları</h2>
+                        <p>Profilinizin görünürlüğünü ve gizliliğinizi kontrol edin</p>
+                    </div>
+
+                    <EditForm Model="privacyModel" OnValidSubmit="UpdatePrivacySettings">
+                        <div class="privacy-settings">
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h3>Profil Görünürlüğü</h3>
+                                    <p>Sadece arkadaşlarınız profilinizi görebilir</p>
+                                </div>
+                                <div class="privacy-control">
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="privacyModel.IsProfilePrivate" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h3>Mesaj İzinleri</h3>
+                                    <p>Sadece arkadaşlarınız size mesaj gönderebilir</p>
+                                </div>
+                                <div class="privacy-control">
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="privacyModel.AllowMessagesFromFriendsOnly" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h3>Takipçi Listesi Gizliliği</h3>
+                                    <p>Takipçi ve takip listenizi gizle</p>
+                                </div>
+                                <div class="privacy-control">
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="privacyModel.HideFollowersList" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h3>Çevrimiçi Durumu</h3>
+                                    <p>Çevrimiçi durumunuzu gizle</p>
+                                </div>
+                                <div class="privacy-control">
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="privacyModel.HideOnlineStatus" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h3>Entry Gizliliği</h3>
+                                    <p>Entry'lerinizi sadece arkadaşlarınız görebilir</p>
+                                </div>
+                                <div class="privacy-control">
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="privacyModel.MakeEntriesPrivate" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" disabled="@isUpdatingPrivacy">
+                                @if (isUpdatingPrivacy)
+                                {
+                                    <span>Güncelleniyor...</span>
+                                }
+                                else
+                                {
+                                    <span>Gizlilik Ayarlarını Kaydet</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            }
+            else if (activeTab == "notifications")
+            {
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h2>Bildirim Ayarları</h2>
+                        <p>Hangi bildirimleri almak istediğinizi seçin</p>
+                    </div>
+
+                    <EditForm Model="notificationModel" OnValidSubmit="UpdateNotificationSettings">
+                        <div class="notification-settings">
+                            <div class="notification-category">
+                                <h3>Sosyal Etkileşimler</h3>
+                                
+                                <div class="notification-item">
+                                    <div class="notification-info">
+                                        <h4>Arkadaşlık İstekleri</h4>
+                                        <p>Size arkadaşlık isteği gönderildiğinde bildirim al</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="notificationModel.FriendRequests" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="notification-item">
+                                    <div class="notification-info">
+                                        <h4>Yeni Takipçiler</h4>
+                                        <p>Birisi sizi takip ettiğinde bildirim al</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="notificationModel.NewFollowers" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="notification-category">
+                                <h3>Mesajlar</h3>
+                                
+                                <div class="notification-item">
+                                    <div class="notification-info">
+                                        <h4>Yeni Mesajlar</h4>
+                                        <p>Size mesaj gönderildiğinde bildirim al</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="notificationModel.NewMessages" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="notification-category">
+                                <h3>Entry Etkileşimleri</h3>
+                                
+                                <div class="notification-item">
+                                    <div class="notification-info">
+                                        <h4>Entry Beğenileri</h4>
+                                        <p>Entry'niz beğenildiğinde bildirim al</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="notificationModel.EntryLikes" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="notification-item">
+                                    <div class="notification-info">
+                                        <h4>Entry Yorumları</h4>
+                                        <p>Entry'nize yorum yapıldığında bildirim al</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <InputCheckbox @bind-Value="notificationModel.EntryComments" />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary" disabled="@isUpdatingNotifications">
+                                @if (isUpdatingNotifications)
+                                {
+                                    <span>Güncelleniyor...</span>
+                                }
+                                else
+                                {
+                                    <span>Bildirim Ayarlarını Kaydet</span>
+                                }
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            }
+            else if (activeTab == "blocked")
+            {
+                <div class="settings-section">
+                    <div class="section-header">
+                        <h2>Engellenen Kullanıcılar</h2>
+                        <p>Engellediğiniz kullanıcıları yönetin</p>
+                    </div>
+
+                    <div class="blocked-users">
+                        @if (blockedUsers.Any())
+                        {
+                            @foreach (var user in blockedUsers)
+                            {
+                                <div class="blocked-user-item">
+                                    <div class="user-info">
+                                        <div class="user-avatar">
+                                            @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
+                                            {
+                                                <img src="/uploads/profiles/@user.ProfilePhotoUrl" alt="@user.Username" />
+                                            }
+                                            else
+                                            {
+                                                <div class="default-avatar">@GetUserInitials(user.Username)</div>
+                                            }
+                                        </div>
+                                        <div class="user-details">
+                                            <h4>@user.Username</h4>
+                                            <p>@GetTimeAgo(user.BlockedAt) tarihinde engellendi</p>
+                                        </div>
+                                    </div>
+                                    <button class="unblock-btn" @onclick="() => UnblockUser(user.Id)">
+                                        Engeli Kaldır
+                                    </button>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-blocked-users">
+                                <span class="empty-icon">🚫</span>
+                                <h3>Engellenen kullanıcı yok</h3>
+                                <p>Henüz hiç kullanıcı engellemediniz.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (activeTab == "danger")
+            {
+                <div class="settings-section danger-zone">
+                    <div class="section-header">
+                        <h2>⚠️ Tehlikeli Bölge</h2>
+                        <p>Bu işlemler geri alınamaz. Dikkatli olun!</p>
+                    </div>
+
+                    <!-- Hesap Silme -->
+                    <div class="danger-card">
+                        <div class="card-header">
+                            <h3>🗑️ Hesabı Sil</h3>
+                            <p>Hesabınızı kalıcı olarak silin. Bu işlem geri alınamaz!</p>
+                        </div>
+                        
+                        <div class="danger-info">
+                            <h4>Hesabınız silindiğinde:</h4>
+                            <ul>
+                                <li>🗂️ Tüm topic'leriniz ve entry'leriniz kalıcı olarak silinir</li>
+                                <li>💾 Favorileriniz ve tüm etkileşimleriniz silinir</li>
+                                <li>👥 Arkadaşlık bağlantılarınız ve mesajlarınız silinir</li>
+                                <li>📧 E-posta adresiniz sistemden kaldırılır</li>
+                                <li>🔄 Bu işlem geri alınamaz!</li>
+                            </ul>
+                        </div>
+
+                        <EditForm Model="deleteAccountModel" OnValidSubmit="DeleteAccount">
+                            <DataAnnotationsValidator />
+                            
+                            <div class="form-group">
+                                <label for="deletePassword">Şifrenizi girin</label>
+                                <InputText id="deletePassword" type="password" @bind-Value="deleteAccountModel.Password" class="form-control" placeholder="Hesabı silmek için şifrenizi girin" />
+                                <ValidationMessage For="() => deleteAccountModel.Password" />
+                                <small class="form-text">Güvenlik için mevcut şifrenizi girin</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    <InputCheckbox @bind-Value="confirmDelete" />
+                                    <span class="checkmark"></span>
+                                    Hesabımı kalıcı olarak silmek istediğimi ve bu işlemin geri alınamaz olduğunu anlıyorum
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-danger" disabled="@(!confirmDelete || isDeletingAccount)">
+                                    @if (isDeletingAccount)
+                                    {
+                                        <span>Hesap Siliniyor...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>🗑️ Hesabı Kalıcı Olarak Sil</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <div class="alert @(isSuccess ? "alert-success" : "alert-danger")">
+                    @message
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string activeTab = "profile";
+    private string message = "";
+    private bool isSuccess = false;
+    
+    private bool isUpdatingProfile = false;
+    private bool isChangingPassword = false;
+    private bool isChangingEmail = false;
+    private bool isUpdatingPrivacy = false;
+    private bool isUpdatingNotifications = false;
+    private bool isDeletingAccount = false;
+    private bool confirmDelete = false;
+
+    private ProfileUpdateModel profileModel = new();
+    private PasswordChangeModel passwordModel = new();
+    private EmailChangeModel emailModel = new();
+    private PrivacySettingsModel privacyModel = new();
+    private NotificationSettingsModel notificationModel = new();
+    private List<BlockedUserModel> blockedUsers = new();
+    private DeleteAccountModel deleteAccountModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Logger.LogInformation("⚙️ Settings OnInitializedAsync başlatıldı");
+            
+            // AuthService'i initialize et
+            await AuthService.InitializeAsync();
+            
+            // Auth durumunu kontrol et
+            if (!AuthService.IsAuthenticated)
+            {
+                Logger.LogWarning("❌ Settings: Kullanıcı giriş yapmamış");
+                return; // Navigation'ı OnAfterRenderAsync'e bırak
+            }
+            
+            Logger.LogInformation("✅ Settings: Kullanıcı doğrulandı");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Settings OnInitializedAsync hatası: {ex.Message}");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                Logger.LogInformation("⚙️ Settings OnAfterRenderAsync başlatılıyor");
+                
+                // AuthService'i yükle
+                await AuthService.LoadFromStorageAsync();
+                
+                if (!AuthService.IsAuthenticated)
+                {
+                    Logger.LogWarning("❌ Kullanıcı giriş yapmamış, login sayfasına yönlendiriliyor");
+                    Navigation.NavigateTo("/login", forceLoad: true);
+                    return;
+                }
+
+                Logger.LogInformation("✅ Kullanıcı doğrulandı, ayarlar yükleniyor");
+                await LoadUserSettings();
+                StateHasChanged();
+                Logger.LogInformation("✅ Settings sayfası başarıyla yüklendi");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"❌ Settings OnAfterRenderAsync hatası: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task LoadUserSettings()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            // Kullanıcı bilgilerini yükle
+            if (AuthService.CurrentUser != null)
+            {
+                profileModel.Username = AuthService.CurrentUser.Username;
+                profileModel.Email = AuthService.CurrentUser.Email ?? "";
+                emailModel.CurrentEmail = AuthService.CurrentUser.Email ?? "";
+            }
+
+            // Gizlilik ayarlarını yükle
+            await LoadPrivacySettings();
+            
+            // Bildirim ayarlarını yükle
+            await LoadNotificationSettings();
+            
+            // Engellenen kullanıcıları yükle
+            await LoadBlockedUsers();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Kullanıcı ayarları yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task LoadPrivacySettings()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync("https://apiservice/api/user/privacy-settings");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("settings", out var settingsElement))
+                    {
+                        privacyModel.IsProfilePrivate = settingsElement.TryGetProperty("isProfilePrivate", out var privateElement) && privateElement.GetBoolean();
+                        privacyModel.AllowMessagesFromFriendsOnly = settingsElement.TryGetProperty("allowMessagesFromFriendsOnly", out var messagesElement) && messagesElement.GetBoolean();
+                        privacyModel.HideFollowersList = settingsElement.TryGetProperty("hideFollowersList", out var followersElement) && followersElement.GetBoolean();
+                        privacyModel.HideOnlineStatus = settingsElement.TryGetProperty("hideOnlineStatus", out var onlineElement) && onlineElement.GetBoolean();
+                        privacyModel.MakeEntriesPrivate = settingsElement.TryGetProperty("makeEntriesPrivate", out var entriesElement) && entriesElement.GetBoolean();
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Gizlilik ayarları yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task LoadNotificationSettings()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync("https://apiservice/api/user/notification-settings");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    if (apiResponse.TryGetProperty("settings", out var settingsElement))
+                    {
+                        notificationModel.FriendRequests = settingsElement.TryGetProperty("friendRequests", out var friendElement) && friendElement.GetBoolean();
+                        notificationModel.NewFollowers = settingsElement.TryGetProperty("newFollowers", out var followElement) && followElement.GetBoolean();
+                        notificationModel.NewMessages = settingsElement.TryGetProperty("newMessages", out var messageElement) && messageElement.GetBoolean();
+                        notificationModel.EntryLikes = settingsElement.TryGetProperty("entryLikes", out var likeElement) && likeElement.GetBoolean();
+                        notificationModel.EntryComments = settingsElement.TryGetProperty("entryComments", out var commentElement) && commentElement.GetBoolean();
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Bildirim ayarları yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private async Task LoadBlockedUsers()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.GetAsync("https://apiservice/api/user/blocked-users");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
+
+                if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
+                {
+                    blockedUsers.Clear();
+                    if (apiResponse.TryGetProperty("users", out var usersElement))
+                    {
+                        foreach (var userElement in usersElement.EnumerateArray())
+                        {
+                            var user = new BlockedUserModel
+                            {
+                                Id = userElement.GetProperty("id").GetInt32(),
+                                Username = userElement.GetProperty("username").GetString() ?? "",
+                                ProfilePhotoUrl = userElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null,
+                                BlockedAt = userElement.GetProperty("blockedAt").GetDateTime()
+                            };
+                            blockedUsers.Add(user);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Engellenen kullanıcılar yükleme hatası: {ex.Message}");
+        }
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+        message = "";
+        StateHasChanged();
+    }
+
+    private async Task UpdateProfile()
+    {
+        if (isUpdatingProfile) return;
+        
+        isUpdatingProfile = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var updateRequest = new { 
+                Email = profileModel.Email,
+                Bio = profileModel.Bio 
+            };
+            var json = JsonSerializer.Serialize(updateRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync("https://apiservice/api/user/profile", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var successContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(successContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Profil bilgileriniz başarıyla güncellendi!";
+                    }
+                    else
+                    {
+                        message = "Profil bilgileriniz başarıyla güncellendi!";
+                    }
+                }
+                catch
+                {
+                    message = "Profil bilgileriniz başarıyla güncellendi!";
+                }
+                isSuccess = true;
+                
+                // AuthService'deki kullanıcı bilgilerini güncelle
+                if (AuthService.CurrentUser != null)
+                {
+                    AuthService.CurrentUser.Email = profileModel.Email;
+                }
+                Logger.LogInformation($"✅ Profil başarıyla güncellendi - Email: {profileModel.Email}");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(errorContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Profil güncellenirken bir hata oluştu.";
+                    }
+                    else
+                    {
+                        message = "Profil güncellenirken bir hata oluştu.";
+                    }
+                }
+                catch
+                {
+                    message = "Profil güncellenirken bir hata oluştu.";
+                }
+                isSuccess = false;
+                Logger.LogError($"❌ Profil güncelleme API hatası: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Profil güncelleme hatası: {ex.Message}");
+            message = "Profil güncellenirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isUpdatingProfile = false;
+        }
+    }
+
+    private async Task ChangePassword()
+    {
+        if (isChangingPassword) return;
+        
+        isChangingPassword = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var changeRequest = new { 
+                CurrentPassword = passwordModel.CurrentPassword,
+                NewPassword = passwordModel.NewPassword 
+            };
+            var json = JsonSerializer.Serialize(changeRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("https://apiservice/api/user/change-password", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var successContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(successContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Şifreniz başarıyla değiştirildi!";
+                    }
+                    else
+                    {
+                        message = "Şifreniz başarıyla değiştirildi!";
+                    }
+                }
+                catch
+                {
+                    message = "Şifreniz başarıyla değiştirildi!";
+                }
+                isSuccess = true;
+                passwordModel = new PasswordChangeModel();
+                Logger.LogInformation($"✅ Şifre başarıyla değiştirildi");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(errorContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Şifre değiştirilirken bir hata oluştu.";
+                    }
+                    else
+                    {
+                        message = "Şifre değiştirilirken bir hata oluştu. Mevcut şifrenizi kontrol edin.";
+                    }
+                }
+                catch
+                {
+                    message = "Şifre değiştirilirken bir hata oluştu. Mevcut şifrenizi kontrol edin.";
+                }
+                isSuccess = false;
+                Logger.LogError($"❌ Şifre değiştirme API hatası: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Şifre değiştirme hatası: {ex.Message}");
+            message = "Şifre değiştirilirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isChangingPassword = false;
+        }
+    }
+
+    private async Task ChangeEmail()
+    {
+        if (isChangingEmail) return;
+        
+        isChangingEmail = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var changeRequest = new { 
+                NewEmail = emailModel.NewEmail,
+                Password = emailModel.Password 
+            };
+            var json = JsonSerializer.Serialize(changeRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("https://apiservice/api/user/change-email", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var successContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(successContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "E-posta adresiniz başarıyla değiştirildi!";
+                    }
+                    else
+                    {
+                        message = "E-posta adresiniz başarıyla değiştirildi!";
+                    }
+                }
+                catch
+                {
+                    message = "E-posta adresiniz başarıyla değiştirildi!";
+                }
+                isSuccess = true;
+                emailModel.CurrentEmail = emailModel.NewEmail;
+                emailModel.NewEmail = "";
+                emailModel.Password = "";
+                
+                // AuthService'deki e-posta bilgisini güncelle
+                if (AuthService.CurrentUser != null)
+                {
+                    AuthService.CurrentUser.Email = emailModel.CurrentEmail;
+                }
+                Logger.LogInformation($"✅ E-posta başarıyla değiştirildi - NewEmail: {emailModel.CurrentEmail}");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(errorContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "E-posta değiştirilirken bir hata oluştu.";
+                    }
+                    else
+                    {
+                        message = "E-posta değiştirilirken bir hata oluştu. Şifrenizi kontrol edin.";
+                    }
+                }
+                catch
+                {
+                    message = "E-posta değiştirilirken bir hata oluştu. Şifrenizi kontrol edin.";
+                }
+                isSuccess = false;
+                Logger.LogError($"❌ E-posta değiştirme API hatası: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ E-posta değiştirme hatası: {ex.Message}");
+            message = "E-posta değiştirilirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isChangingEmail = false;
+        }
+    }
+
+    private async Task UpdatePrivacySettings()
+    {
+        if (isUpdatingPrivacy) return;
+        
+        isUpdatingPrivacy = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var json = JsonSerializer.Serialize(privacyModel);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync("https://apiservice/api/user/privacy-settings", content);
+            if (response.IsSuccessStatusCode)
+            {
+                message = "Gizlilik ayarlarınız başarıyla güncellendi!";
+                isSuccess = true;
+            }
+            else
+            {
+                message = "Gizlilik ayarları güncellenirken bir hata oluştu.";
+                isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Gizlilik ayarları güncelleme hatası: {ex.Message}");
+            message = "Gizlilik ayarları güncellenirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isUpdatingPrivacy = false;
+        }
+    }
+
+    private async Task UpdateNotificationSettings()
+    {
+        if (isUpdatingNotifications) return;
+        
+        isUpdatingNotifications = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var json = JsonSerializer.Serialize(notificationModel);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync("https://apiservice/api/user/notification-settings", content);
+            if (response.IsSuccessStatusCode)
+            {
+                message = "Bildirim ayarlarınız başarıyla güncellendi!";
+                isSuccess = true;
+            }
+            else
+            {
+                message = "Bildirim ayarları güncellenirken bir hata oluştu.";
+                isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Bildirim ayarları güncelleme hatası: {ex.Message}");
+            message = "Bildirim ayarları güncellenirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isUpdatingNotifications = false;
+        }
+    }
+
+    private async Task UnblockUser(int userId)
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var response = await httpClient.DeleteAsync($"https://apiservice/api/user/block/{userId}");
+            if (response.IsSuccessStatusCode)
+            {
+                blockedUsers.RemoveAll(u => u.Id == userId);
+                message = "Kullanıcının engeli başarıyla kaldırıldı!";
+                isSuccess = true;
+                StateHasChanged();
+            }
+            else
+            {
+                message = "Engel kaldırılırken bir hata oluştu.";
+                isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Engel kaldırma hatası: {ex.Message}");
+            message = "Engel kaldırılırken bir hata oluştu.";
+            isSuccess = false;
+        }
+    }
+
+    private async Task DeleteAccount()
+    {
+        if (isDeletingAccount || !confirmDelete) return;
+        
+        isDeletingAccount = true;
+        message = "";
+        
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var deleteRequest = new { 
+                Password = deleteAccountModel.Password
+            };
+            var json = JsonSerializer.Serialize(deleteRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, "https://apiservice/api/user/delete-account") { Content = content });
+            if (response.IsSuccessStatusCode)
+            {
+                var successContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(successContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Hesabınız başarıyla silindi!";
+                    }
+                    else
+                    {
+                        message = "Hesabınız başarıyla silindi!";
+                    }
+                }
+                catch
+                {
+                    message = "Hesabınız başarıyla silindi!";
+                }
+                isSuccess = true;
+                
+                // Kullanıcıyı çıkış yap
+                await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "token");
+                await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "user");
+                
+                // Ana sayfaya yönlendir
+                await Task.Delay(2000);
+                Navigation.NavigateTo("/", forceLoad: true);
+                
+                Logger.LogInformation("✅ Hesap başarıyla silindi");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var apiResponse = JsonSerializer.Deserialize<JsonElement>(errorContent);
+                    if (apiResponse.TryGetProperty("message", out var messageElement))
+                    {
+                        message = messageElement.GetString() ?? "Hesap silinirken bir hata oluştu.";
+                    }
+                    else
+                    {
+                        message = "Hesap silinirken bir hata oluştu. Şifrenizi kontrol edin.";
+                    }
+                }
+                catch
+                {
+                    message = "Hesap silinirken bir hata oluştu. Şifrenizi kontrol edin.";
+                }
+                isSuccess = false;
+                Logger.LogError($"❌ Hesap silme API hatası: {response.StatusCode} - {errorContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Hesap silme hatası: {ex.Message}");
+            message = "Hesap silinirken bir hata oluştu.";
+            isSuccess = false;
+        }
+        finally
+        {
+            isDeletingAccount = false;
+        }
+    }
+
+    private string GetUserInitials(string username)
+    {
+        if (string.IsNullOrEmpty(username)) return "?";
+        return username.Length >= 2 ? username.Substring(0, 2).ToUpper() : username.ToUpper();
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.UtcNow - dateTime;
+
+        if (timeSpan.TotalMinutes < 1) return "az önce";
+        if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes}dk önce";
+        if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours}sa önce";
+        if (timeSpan.TotalDays < 7) return $"{(int)timeSpan.TotalDays}gün önce";
+        
+        return dateTime.ToString("dd.MM.yyyy");
+    }
+
+    public class ProfileUpdateModel
+    {
+        public string Username { get; set; } = "";
+        
+        [Required(ErrorMessage = "E-posta adresi gerekli")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin")]
+        public string Email { get; set; } = "";
+        
+        [StringLength(500, ErrorMessage = "Hakkında kısmı en fazla 500 karakter olabilir")]
+        public string Bio { get; set; } = "";
+    }
+
+    public class PasswordChangeModel
+    {
+        [Required(ErrorMessage = "Mevcut şifre gerekli")]
+        public string CurrentPassword { get; set; } = "";
+        
+        [Required(ErrorMessage = "Yeni şifre gerekli")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Şifre en az 6 karakter olmalı")]
+        public string NewPassword { get; set; } = "";
+        
+        [Required(ErrorMessage = "Şifre tekrarı gerekli")]
+        [Compare("NewPassword", ErrorMessage = "Şifreler eşleşmiyor")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+
+    public class EmailChangeModel
+    {
+        public string CurrentEmail { get; set; } = "";
+        
+        [Required(ErrorMessage = "Yeni e-posta adresi gerekli")]
+        [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin")]
+        public string NewEmail { get; set; } = "";
+        
+        [Required(ErrorMessage = "Şifre gerekli")]
+        public string Password { get; set; } = "";
+    }
+
+    public class PrivacySettingsModel
+    {
+        public bool IsProfilePrivate { get; set; }
+        public bool AllowMessagesFromFriendsOnly { get; set; }
+        public bool HideFollowersList { get; set; }
+        public bool HideOnlineStatus { get; set; }
+        public bool MakeEntriesPrivate { get; set; }
+    }
+
+    public class NotificationSettingsModel
+    {
+        public bool FriendRequests { get; set; } = true;
+        public bool NewFollowers { get; set; } = true;
+        public bool NewMessages { get; set; } = true;
+        public bool EntryLikes { get; set; } = true;
+        public bool EntryComments { get; set; } = true;
+    }
+
+    public class BlockedUserModel
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
+        public string? ProfilePhotoUrl { get; set; }
+        public DateTime BlockedAt { get; set; }
+    }
+
+    public class DeleteAccountModel
+    {
+        [Required(ErrorMessage = "Şifre gerekli")]
+        public string Password { get; set; } = "";
+    }
+}

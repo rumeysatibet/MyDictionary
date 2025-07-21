@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "mcpprobe": {
+      "command": "C:\\dev\\github\\mcp-probe\\mcpprobe\\src\\mcp\\mcpprobe.mcp.server\\bin\\release\\net9.0\\publish\\mcp-probe.exe",
+      "args": [
+        "--project-root",
+        "."
+      ],
+      "cwd": ".",
+      "env": {
+        "MCPPROBE_PROJECT": "C:\\DEV\\Github\\MyDictionary\\MyDictionary",
+        "MCPPROBE_PROBEDATA": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\_probedata",
+        "MCPPROBE_LOG_PATH": "C:\\DEV\\Github\\MyDictionary\\MyDictionary\\MyDictionary.ApiService\\_probedata"
+      }
+    }
+  }
+}

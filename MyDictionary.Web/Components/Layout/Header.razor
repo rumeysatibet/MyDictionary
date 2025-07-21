@@ -21,7 +21,7 @@
 
         <!-- Arama Kutusu -->
         <div class="search-section">
-            <div class="search-container">
+            <div class="search-container" @onclick:stopPropagation="true">
                 <input type="text" 
                        class="search-input" 
                        placeholder="kullanıcı ara..."
@@ -32,32 +32,43 @@
                     <span class="search-icon">🔍</span>
                 </button>
                 
-                @if (showSearchResults && searchResults.Any())
+                @if (showSearchResults)
                 {
-                    <div class="search-dropdown">
-                        @foreach (var user in searchResults)
+                    <div class="search-dropdown" @onclick:stopPropagation="true">
+                        @if (searchResults.Any())
                         {
-                            <div class="search-result-item" @onclick="() => NavigateToProfile(user.Username)">
-                                <div class="user-avatar-small">
-                                    @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
-                                    {
-                                        <img src="https://apiservice/uploads/profiles/@user.ProfilePhotoUrl" alt="@user.Username" />
-                                    }
-                                    else
-                                    {
-                                        <div class="default-avatar-mini">@GetUserInitials(user.Username)</div>
-                                    }
+                            @foreach (var user in searchResults)
+                            {
+                                <div class="search-result-item" @onclick="() => NavigateToProfile(user.Username)">
+                                    <div class="user-avatar-small">
+                                        @if (!string.IsNullOrEmpty(user.ProfilePhotoUrl))
+                                        {
+                                            <img src="/uploads/profiles/@user.ProfilePhotoUrl" alt="@user.Username" />
+                                        }
+                                        else
+                                        {
+                                            <div class="default-avatar-mini">@GetUserInitials(user.Username)</div>
+                                        }
+                                    </div>
+                                    <div class="user-info">
+                                        <div class="username">@user.Username</div>
+                                        <div class="email">@user.Email</div>
+                                        <div class="user-stats">@user.EntryCount entry • @user.FollowerCount takipçi</div>
+                                    </div>
                                 </div>
-                                <div class="user-info">
-                                    <div class="username">@user.Username</div>
-                                    <div class="user-stats">@user.EntryCount entry • @user.FollowerCount takipçi</div>
+                            }
+                            @if (searchResults.Count >= 5)
+                            {
+                                <div class="search-more" @onclick="ViewAllResults">
+                                    Tüm sonuçları gör...
                                 </div>
-                            </div>
+                            }
                         }
-                        @if (searchResults.Count >= 5)
+                        else
                         {
-                            <div class="search-more" @onclick="ViewAllResults">
-                                Tüm sonuçları gör...
+                            <div class="no-search-results">
+                                <span class="no-results-icon">🔍</span>
+                                <span class="no-results-text">"@SearchQuery" için sonuç bulunamadı</span>
                             </div>
                         }
                     </div>
@@ -85,6 +96,13 @@
                                 <span class="message-badge">@unreadMessageCount</span>
                             }
                         </button>
+                        @if (AuthService.IsAuthenticated)
+                        {
+                            <a href="/newtopic" class="new-topic-button" title="başlık aç">
+                                <span class="new-topic-icon">➕</span>
+                                <span class="new-topic-text">başlık aç</span>
+                            </a>
+                        }
                         <button class="user-button" @onclick="ToggleUserDropdown">
                             <span class="user-name">@(AuthService.CurrentUser?.Username ?? "ben")</span>
                             <span class="dropdown-arrow">▼</span>
@@ -115,7 +133,7 @@
                                                     <div class="notification-avatar">
                                                         @if (!string.IsNullOrEmpty(notification.FromUser.ProfilePhotoUrl))
                                                         {
-                                                            <img src="https://apiservice/uploads/profiles/@notification.FromUser.ProfilePhotoUrl" alt="@notification.FromUser.Username" />
+                                                            <img src="/uploads/profiles/@notification.FromUser.ProfilePhotoUrl" alt="@notification.FromUser.Username" />
                                                         }
                                                         else
                                                         {
@@ -183,14 +201,10 @@
     <!-- Kategori Navigasyonu -->
     <nav class="category-nav">
         <div class="category-container">
-            <a href="/category/yazilim" class="category-link">yazılım</a>
-            <a href="/category/yasam" class="category-link">yaşam</a>
-            <a href="/category/diziler" class="category-link">diziler</a>
-            <a href="/category/kitaplar" class="category-link">kitaplar</a>
-            <a href="/category/muzik" class="category-link">müzik</a>
-            <a href="/category/spor" class="category-link">spor</a>
-            <a href="/category/tarih" class="category-link">tarih</a>
-            <a href="/category/seyahat" class="category-link">seyahat</a>
+            @foreach (var category in categories.Take(12))
+            {
+                <a href="/category/@category.Slug" class="category-link">@category.Name</a>
+            }
         </div>
     </nav>
 </header>
@@ -202,10 +216,13 @@
     private bool showNotifications = false;
     private List<UserSearchResult> searchResults = new();
     private List<NotificationResult> notifications = new();
+    private List<CategoryResult> categories = new();
     private int unreadNotificationCount = 0;
     private int unreadMessageCount = 0;
     private System.Threading.Timer? searchTimer;
     private System.Threading.Timer? notificationTimer;
+    private bool isManualSearch = false;
+    private bool isSearching = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -214,6 +231,9 @@
         await AuthService.InitializeAsync();
         AuthService.OnAuthenticationChanged += StateHasChanged;
         Logger.LogInformation($"🔐 Header Initialize - IsAuthenticated: {AuthService.IsAuthenticated}, User: {AuthService.CurrentUser?.Username ?? "null"}");
+        
+        // Kategorileri yükle
+        await LoadCategories();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -224,6 +244,7 @@
             // İlk render sonrası localStorage'dan kullanıcı bilgilerini yükle
             await AuthService.LoadFromStorageAsync();
             Logger.LogInformation($"🔐 Header AfterRender - IsAuthenticated: {AuthService.IsAuthenticated}, User: {AuthService.CurrentUser?.Username ?? "null"}");
+            
             
             // Bildirimları ve mesajları yükle ve periyodik olarak kontrol et
             if (AuthService.IsAuthenticated)
@@ -251,6 +272,13 @@
         // Timer'ı iptal et
         searchTimer?.Dispose();
         
+        // Manuel arama devam ediyorsa input aramayı engelle
+        if (isManualSearch)
+        {
+            Logger.LogInformation("⚠️ Manuel arama devam ediyor, input arama engellendi");
+            return;
+        }
+        
         if (string.IsNullOrWhiteSpace(SearchQuery) || SearchQuery.Length < 2)
         {
             showSearchResults = false;
@@ -258,22 +286,65 @@
             return;
         }
         
-        // 300ms delay ile arama yap
+        // 300ms delay ile arama yap (sadece input search için)
         searchTimer = new System.Threading.Timer(async _ =>
         {
             await InvokeAsync(async () =>
             {
-                await SearchUsers();
-                StateHasChanged();
+                if (!isManualSearch && !isSearching) // Double check
+                {
+                    await SearchUsers();
+                    StateHasChanged();
+                }
             });
         }, null, 300, Timeout.Infinite);
     }
 
     private async Task HandleSearch()
     {
-        if (!string.IsNullOrWhiteSpace(SearchQuery))
+        if (isSearching)
         {
-            await SearchUsers();
+            Logger.LogInformation("⚠️ Arama zaten devam ediyor, duplicate call engellendi");
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(SearchQuery) && SearchQuery.Length >= 2)
+        {
+            isSearching = true;
+            isManualSearch = true;
+            
+            // Timer'ı iptal et (input search ile conflict önlemek için)
+            searchTimer?.Dispose();
+            
+            Logger.LogInformation($"🔍 Manuel arama başlatılıyor: '{SearchQuery}'");
+            
+            try
+            {
+                await SearchUsers();
+                
+                // Manuel aramada her zaman dropdown'ı göster
+                showSearchResults = true;
+                if (searchResults.Any())
+                {
+                    Logger.LogInformation($"✅ Manuel arama dropdown gösteriliyor: {searchResults.Count} sonuç");
+                }
+                else
+                {
+                    Logger.LogInformation("⚠️ Manuel arama sonucu bulunamadı ama dropdown gösteriliyor");
+                }
+                StateHasChanged();
+            }
+            finally
+            {
+                isSearching = false;
+                isManualSearch = false;
+            }
+        }
+        else
+        {
+            Logger.LogInformation("⚠️ Manuel arama: terim çok kısa (min 2 karakter)");
+            showSearchResults = false;
+            StateHasChanged();
         }
     }
 
@@ -281,11 +352,27 @@
     {
         if (e.Key == "Enter")
         {
-            await HandleSearch();
+            Logger.LogInformation("⌨️ Enter tuşu basıldı");
+            
+            // Input search timer'ını iptal et
+            searchTimer?.Dispose();
+            
+            if (!isSearching)
+            {
+                Logger.LogInformation("⌨️ Enter ile manuel arama başlatılıyor");
+                await HandleSearch();
+            }
+            else
+            {
+                Logger.LogInformation("⌨️ Enter basıldı ama arama zaten devam ediyor");
+            }
         }
         else if (e.Key == "Escape")
         {
+            Logger.LogInformation("⌨️ Escape tuşu basıldı, dropdown kapatılıyor");
+            searchTimer?.Dispose();
             showSearchResults = false;
+            SearchQuery = "";
             StateHasChanged();
         }
     }
@@ -300,14 +387,20 @@
                 return;
             }
 
-            Logger.LogInformation($"🔍 Header'da kullanıcı arama: {SearchQuery}");
+            Logger.LogInformation($"🔍 Header'da kullanıcı arama başlatıldı: '{SearchQuery}'");
             
             var httpClient = HttpClientFactory.CreateClient("ApiService");
-            var response = await httpClient.GetAsync($"https://apiservice/api/user/search?query={Uri.EscapeDataString(SearchQuery)}&pageSize=5");
+            var searchUrl = $"https://apiservice/api/user/search?query={Uri.EscapeDataString(SearchQuery)}&pageSize=5";
+            Logger.LogInformation($"🌐 API URL: {searchUrl}");
+            
+            var response = await httpClient.GetAsync(searchUrl);
+            Logger.LogInformation($"📡 API Response Status: {response.StatusCode}");
             
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
+                Logger.LogInformation($"📥 API Response Content: {content}");
+                
                 var apiResponse = JsonSerializer.Deserialize<JsonElement>(content);
                 
                 if (apiResponse.TryGetProperty("success", out var successElement) && successElement.GetBoolean())
@@ -318,32 +411,77 @@
                         
                         foreach (var userElement in usersElement.EnumerateArray())
                         {
-                            searchResults.Add(new UserSearchResult
+                            var newUser = new UserSearchResult
                             {
                                 Id = userElement.GetProperty("id").GetInt32(),
                                 Username = userElement.GetProperty("username").GetString() ?? "",
+                                Email = userElement.TryGetProperty("email", out var emailElement) ? emailElement.GetString() ?? "" : "",
                                 ProfilePhotoUrl = userElement.TryGetProperty("profilePhotoUrl", out var photoElement) ? photoElement.GetString() : null,
                                 EntryCount = userElement.GetProperty("entryCount").GetInt32(),
                                 FollowerCount = userElement.GetProperty("followerCount").GetInt32()
-                            });
+                            };
+                            
+                            searchResults.Add(newUser);
+                            Logger.LogInformation($"👤 Kullanıcı eklendi: {newUser.Username} (ID: {newUser.Id})");
                         }
                         
-                        showSearchResults = searchResults.Any();
+                        // Manuel arama değilse, sonuç varsa dropdown göster
+                        if (!isManualSearch)
+                        {
+                            showSearchResults = searchResults.Any();
+                        }
+                        Logger.LogInformation($"✅ Arama tamamlandı: {searchResults.Count} kullanıcı bulundu, showSearchResults: {showSearchResults}");
+                        
+                        // DEBUG: State değerlerini detaylı logla
+                        Logger.LogInformation($"🎯 DEBUG - showSearchResults: {showSearchResults}");
+                        Logger.LogInformation($"🎯 DEBUG - searchResults.Count: {searchResults.Count}");
+                        Logger.LogInformation($"🎯 DEBUG - searchResults.Any(): {searchResults.Any()}");
+                        foreach (var user in searchResults)
+                        {
+                            Logger.LogInformation($"🎯 DEBUG - User: {user.Username}, ID: {user.Id}");
+                        }
+                        
+                        // KRITIK: UI'ı güncellemeyi zorla
+                        StateHasChanged();
+                        Logger.LogInformation($"🔄 StateHasChanged() çağrıldı!");
+                    }
+                    else
+                    {
+                        Logger.LogWarning("⚠️ API response'da 'users' property bulunamadı");
                     }
                 }
+                else
+                {
+                    Logger.LogWarning("⚠️ API success=false döndürdü");
+                }
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Logger.LogError($"❌ API hata döndürdü: {response.StatusCode} - {errorContent}");
             }
         }
         catch (Exception ex)
         {
             Logger.LogError($"❌ Kullanıcı arama hatası: {ex.Message}");
+            Logger.LogError($"❌ Stack trace: {ex.StackTrace}");
         }
     }
 
     private void NavigateToProfile(string username)
     {
-        showSearchResults = false;
-        SearchQuery = "";
-        Navigation.NavigateTo($"/profile/{username}");
+        try
+        {
+            Logger.LogInformation($"🔗 Profile navigation başlatılıyor: {username}");
+            showSearchResults = false;
+            SearchQuery = "";
+            StateHasChanged();
+            Navigation.NavigateTo($"/profile/{username}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Profile navigation hatası: {ex.Message}");
+        }
     }
 
     private void ViewAllResults()
@@ -575,7 +713,38 @@
 
     private void NavigateToMessages()
     {
-        Navigation.NavigateTo("/messages");
+        try
+        {
+            Logger.LogInformation("💬 Messages navigation başlatılıyor");
+            
+            // Auth kontrolü
+            if (!AuthService.IsAuthenticated)
+            {
+                Logger.LogWarning("❌ Messages: Kullanıcı giriş yapmamış, login'e yönlendiriliyor");
+                Navigation.NavigateTo("/login");
+                return;
+            }
+            
+            // Messages sayfasına güvenli navigation
+            Navigation.NavigateTo("/messages", forceLoad: false);
+            Logger.LogInformation("✅ Messages navigation başarılı");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Messages navigation hatası: {ex.Message}");
+            Logger.LogError($"❌ Stack trace: {ex.StackTrace}");
+            
+            // Fallback: force reload ile tekrar dene
+            try
+            {
+                Logger.LogInformation("🔄 Messages navigation fallback deneniyor");
+                Navigation.NavigateTo("/messages", forceLoad: true);
+            }
+            catch (Exception fallbackEx)
+            {
+                Logger.LogError($"❌ Messages navigation fallback hatası: {fallbackEx.Message}");
+            }
+        }
     }
 
     private string GetTimeAgo(DateTime dateTime)
@@ -590,10 +759,50 @@
         return dateTime.ToString("dd MMM");
     }
 
+    private async Task LoadCategories()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var response = await httpClient.GetAsync("https://apiservice/api/categories");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var apiCategories = JsonSerializer.Deserialize<JsonElement>(content);
+                
+                categories.Clear();
+                foreach (var categoryElement in apiCategories.EnumerateArray())
+                {
+                    var category = new CategoryResult
+                    {
+                        Id = categoryElement.GetProperty("id").GetInt32(),
+                        Name = categoryElement.GetProperty("name").GetString() ?? "",
+                        Slug = categoryElement.GetProperty("slug").GetString() ?? "",
+                        Color = categoryElement.TryGetProperty("color", out var colorElement) ? colorElement.GetString() ?? "" : "",
+                        TopicCount = categoryElement.GetProperty("topicCount").GetInt32()
+                    };
+                    categories.Add(category);
+                }
+                
+                Logger.LogInformation($"✅ {categories.Count} kategori yüklendi");
+            }
+            else
+            {
+                Logger.LogError($"❌ Categories API hatası: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"❌ Categories yükleme hatası: {ex.Message}");
+        }
+    }
+
     public class UserSearchResult
     {
         public int Id { get; set; }
         public string Username { get; set; } = "";
+        public string Email { get; set; } = "";
         public string? ProfilePhotoUrl { get; set; }
         public int EntryCount { get; set; }
         public int FollowerCount { get; set; }
@@ -614,5 +823,14 @@
         public int Id { get; set; }
         public string Username { get; set; } = "";
         public string? ProfilePhotoUrl { get; set; }
+    }
+
+    public class CategoryResult
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Slug { get; set; } = "";
+        public string Color { get; set; } = "";
+        public int TopicCount { get; set; }
     }
 }

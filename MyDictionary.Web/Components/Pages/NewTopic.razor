@@ -1,0 +1,341 @@
+@page "/newtopic"
+@page "/new-topic"
+@rendermode InteractiveServer
+@using MyDictionary.Web.Services
+@inject AuthenticationStateService AuthService
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager Navigation
+@inject ILogger<NewTopic> Logger
+
+<PageTitle>Yeni Başlık - MyDictionary</PageTitle>
+
+<div class="new-topic-container">
+    @if (!AuthService.IsAuthenticated)
+    {
+        <div class="auth-required">
+            <h2>başlık açmak için giriş yapmalısın</h2>
+            <p>yeni başlık açabilmek için önce hesabına giriş yapman gerekiyor.</p>
+            <a href="/login" class="btn btn-primary">giriş yap</a>
+        </div>
+    }
+    else
+    {
+        <div class="form-container">
+            <h1 class="page-title">yeni başlık aç</h1>
+            
+            <div class="form-section">
+                <label for="category" class="form-label">kategori seç</label>
+                <select id="category" @bind="selectedCategoryId" class="form-select">
+                    <option value="0">kategori seçin...</option>
+                    @if (categories != null)
+                    {
+                        @foreach (var category in categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+                @if (showCategoryError)
+                {
+                    <div class="error-message">lütfen bir kategori seçin</div>
+                }
+            </div>
+
+            <div class="form-section">
+                <label for="title" class="form-label">başlık</label>
+                <input type="text" 
+                       id="title" 
+                       @bind="topicTitle" 
+                       @oninput="OnTitleChanged"
+                       placeholder="başlık adını buraya yazın..."
+                       class="form-input"
+                       maxlength="200" />
+                <div class="input-info">
+                    <span class="char-count">@topicTitle.Length/200</span>
+                    @if (!string.IsNullOrWhiteSpace(generatedSlug))
+                    {
+                        <span class="slug-preview">URL: /topic/@generatedSlug</span>
+                    }
+                </div>
+                @if (showTitleError)
+                {
+                    <div class="error-message">başlık en az 3 karakter olmalı</div>
+                }
+            </div>
+
+            <div class="form-section">
+                <label for="firstEntry" class="form-label">ilk entry (isteğe bağlı)</label>
+                <textarea id="firstEntry" 
+                          @bind="firstEntryContent" 
+                          placeholder="bu başlık hakkında ilk entry'yi sen yaz..."
+                          class="form-textarea"
+                          rows="6"></textarea>
+                <div class="input-info">
+                    <span class="char-count">@firstEntryContent.Length karakter</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" @onclick="GoBack">
+                    iptal
+                </button>
+                <button type="button" 
+                        class="btn btn-primary" 
+                        @onclick="CreateTopic"
+                        disabled="@(isSubmitting || !IsFormValid())">
+                    @if (isSubmitting)
+                    {
+                        <span>oluşturuluyor...</span>
+                    }
+                    else
+                    {
+                        <span>başlığı aç</span>
+                    }
+                </button>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <div class="error-banner">
+                    @errorMessage
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, SupplyParameterFromQuery] public string? title { get; set; }
+    
+    private List<CategoryDto>? categories;
+    private int selectedCategoryId = 0;
+    private string topicTitle = string.Empty;
+    private string generatedSlug = string.Empty;
+    private string firstEntryContent = string.Empty;
+    private bool isSubmitting = false;
+    private string errorMessage = string.Empty;
+    private bool showCategoryError = false;
+    private bool showTitleError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.InitializeAsync();
+        
+        if (AuthService.IsAuthenticated)
+        {
+            await LoadCategoriesAsync();
+        }
+        
+        // Query parameter'dan title'ı al
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            topicTitle = title;
+            OnTitleChanged(new ChangeEventArgs { Value = title });
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AuthService.LoadFromStorageAsync();
+            
+            if (!AuthService.IsAuthenticated)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            categories = await httpClient.GetFromJsonAsync<List<CategoryDto>>("https://apiservice/api/categories");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Kategoriler yüklenirken hata oluştu");
+            errorMessage = "Kategoriler yüklenirken bir hata oluştu.";
+        }
+    }
+
+    private void OnTitleChanged(ChangeEventArgs e)
+    {
+        topicTitle = e.Value?.ToString() ?? string.Empty;
+        generatedSlug = GenerateSlug(topicTitle);
+        showTitleError = false;
+        errorMessage = string.Empty;
+    }
+
+    private string GenerateSlug(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return string.Empty;
+
+        var slug = title.ToLowerInvariant()
+            .Replace("ç", "c")
+            .Replace("ğ", "g")
+            .Replace("ı", "i")
+            .Replace("ö", "o")
+            .Replace("ş", "s")
+            .Replace("ü", "u")
+            .Replace(" ", "-")
+            .Replace("?", "")
+            .Replace("!", "")
+            .Replace(".", "")
+            .Replace(",", "")
+            .Replace(":", "")
+            .Replace(";", "")
+            .Replace("(", "")
+            .Replace(")", "")
+            .Replace("[", "")
+            .Replace("]", "")
+            .Replace("\"", "")
+            .Replace("'", "");
+
+        // Consecutive hyphens'i tek hyphen yap
+        while (slug.Contains("--"))
+        {
+            slug = slug.Replace("--", "-");
+        }
+
+        // Başındaki ve sonundaki hyphens'i kaldır
+        slug = slug.Trim('-');
+
+        return slug;
+    }
+
+    private bool IsFormValid()
+    {
+        return selectedCategoryId > 0 && 
+               !string.IsNullOrWhiteSpace(topicTitle) && 
+               topicTitle.Trim().Length >= 3;
+    }
+
+    private async Task CreateTopic()
+    {
+        showCategoryError = false;
+        showTitleError = false;
+        errorMessage = string.Empty;
+
+        // Validasyon
+        if (selectedCategoryId <= 0)
+        {
+            showCategoryError = true;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(topicTitle) || topicTitle.Trim().Length < 3)
+        {
+            showTitleError = true;
+            return;
+        }
+
+        if (!AuthService.IsAuthenticated || AuthService.CurrentUser == null)
+        {
+            errorMessage = "Giriş yapmanız gerekiyor.";
+            return;
+        }
+
+        try
+        {
+            isSubmitting = true;
+
+            // Başlığı oluştur
+            var createTopicRequest = new CreateTopicRequest
+            {
+                Title = topicTitle.Trim(),
+                CategoryId = selectedCategoryId,
+                CreatedByUserId = AuthService.CurrentUser.Id
+            };
+
+            var httpClient = HttpClientFactory.CreateClient("ApiService");
+            var topicResponse = await httpClient.PostAsJsonAsync("https://apiservice/api/topics", createTopicRequest);
+            
+            if (!topicResponse.IsSuccessStatusCode)
+            {
+                errorMessage = "Başlık oluşturulurken bir hata oluştu.";
+                return;
+            }
+
+            var createdTopic = await topicResponse.Content.ReadFromJsonAsync<CreateTopicResponse>();
+            
+            if (createdTopic == null)
+            {
+                errorMessage = "Başlık oluşturuldu ancak veriler alınamadı.";
+                return;
+            }
+
+            // İlk entry varsa oluştur
+            if (!string.IsNullOrWhiteSpace(firstEntryContent))
+            {
+                var createEntryRequest = new CreateEntryRequest
+                {
+                    Content = firstEntryContent.Trim(),
+                    TopicId = createdTopic.Id,
+                    CreatedByUserId = AuthService.CurrentUser.Id
+                };
+
+                var entryResponse = await httpClient.PostAsJsonAsync("https://apiservice/api/entries", createEntryRequest);
+                
+                if (!entryResponse.IsSuccessStatusCode)
+                {
+                    Logger.LogWarning("Başlık oluşturuldu ancak ilk entry oluşturulamadı");
+                }
+            }
+
+            // Başarılı - başlık sayfasına yönlendir
+            Navigation.NavigateTo($"/topic/{createdTopic.Slug}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Başlık oluşturulurken hata oluştu");
+            errorMessage = "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    // DTO sınıfları
+    public class CategoryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+    }
+
+    public class CreateTopicRequest
+    {
+        public string Title { get; set; } = string.Empty;
+        public int CategoryId { get; set; }
+        public int CreatedByUserId { get; set; }
+    }
+
+    public class CreateTopicResponse
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
+        public int CategoryId { get; set; }
+        public int CreatedByUserId { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class CreateEntryRequest
+    {
+        public string Content { get; set; } = string.Empty;
+        public int TopicId { get; set; }
+        public int CreatedByUserId { get; set; }
+    }
+}

@@ -13,4 +13,22 @@
     <ProjectReference Include="..\MyDictionary.ServiceDefaults\MyDictionary.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="McpProbe.Blazor.Wasm">
+      <HintPath>..\mcp-probe\McpProbe\Src\McpProbe.Blazor.Wasm\bin\Debug\net9.0\McpProbe.Blazor.Wasm.dll</HintPath>
+    </Reference>
+    <Reference Include="McpProbe.Core">
+      <HintPath>..\mcp-probe\McpProbe\Src\McpProbe.Blazor.Wasm\bin\Debug\net9.0\McpProbe.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
